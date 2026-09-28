@@ -1,5 +1,5 @@
 ---
-title: "Laboratory Data & Descriptive Analyses"
+title: "Descriptive Analyses & Laboratory Data"
 subtitle: "Carehome Outbreak Exercise"
 ---
 
@@ -43,7 +43,7 @@ lab <- import(here("data", "raw", "carehome_familyday_lab.csv"))
 
 Description of the sample should follow the same logic of person-place-time that we used for the case definition. But this time, we already defined who is a considered a case and who is not, so we will explore the characteristics that will lead us later to further analyses in the next investigation steps.
 
-## Person: Attack Proportions
+### Person: Attack Proportions
 
 We will start with the basics: counts and percentages.
 
@@ -100,7 +100,7 @@ table1 %>%
 ```
 :::
 
-## Person: Age and Sex Distribution
+### Person: Age and Sex Distribution
 
 We know about the median ages and sex distribution of cases and non-cases, but we should explore further to find potential differences for example between residents of the care home and their families. We can do that with both a table and a boxplot:
 
@@ -125,7 +125,7 @@ clean %>%
 ```
 :::
 
-## Person: Symptoms by Case Definition
+### Person: Symptoms by Case Definition
 
 **Action** — Produce a summary table displaying the symptoms among cases and non-cases. Probably you can recycle the vector you created to clean these columns for this task. *Which symptom was the more common among cases*?
 
@@ -168,11 +168,11 @@ clean %>%
 ```
 :::
 
-## Place: nothing to explore for now
+### Place: nothing to explore for now
 
 Because we are in the context of a single event, place is already accounted with all included attendees. In this particular outbreak, we did not collect any other information that could have impacted the outbreak in terms of place like table distribution, serving times, or attending personnel. All those could constitute elements of place, even if not that straightforward.
 
-## Time: Epicurve of Cases
+### Time: Epicurve of Cases
 
 You explored the incubation period distribution to decide about the Case Definition time criteria. Now we have our cases and we should aim to building the outbreak's epicurve using the `onset_datetime` we created:
 

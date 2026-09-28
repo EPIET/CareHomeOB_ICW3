@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Laboratory Data &amp; Descriptive Analyses – Carehome Outbreak Exercise</title>
+<title>Descriptive Analyses &amp; Laboratory Data – Carehome Outbreak Exercise</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -178,12 +178,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
    
   <ul>
   <li><a href="#set-yourself-up" id="toc-set-yourself-up" class="nav-link active" data-scroll-target="#set-yourself-up">Set yourself up</a></li>
-  <li><a href="#descriptive-analyses" id="toc-descriptive-analyses" class="nav-link" data-scroll-target="#descriptive-analyses">1. Descriptive analyses</a></li>
+  <li><a href="#descriptive-analyses" id="toc-descriptive-analyses" class="nav-link" data-scroll-target="#descriptive-analyses">1. Descriptive analyses</a>
+  <ul class="collapse">
   <li><a href="#person-attack-proportions" id="toc-person-attack-proportions" class="nav-link" data-scroll-target="#person-attack-proportions">Person: Attack Proportions</a></li>
   <li><a href="#person-age-and-sex-distribution" id="toc-person-age-and-sex-distribution" class="nav-link" data-scroll-target="#person-age-and-sex-distribution">Person: Age and Sex Distribution</a></li>
   <li><a href="#person-symptoms-by-case-definition" id="toc-person-symptoms-by-case-definition" class="nav-link" data-scroll-target="#person-symptoms-by-case-definition">Person: Symptoms by Case Definition</a></li>
   <li><a href="#place-nothing-to-explore-for-now" id="toc-place-nothing-to-explore-for-now" class="nav-link" data-scroll-target="#place-nothing-to-explore-for-now">Place: nothing to explore for now</a></li>
   <li><a href="#time-epicurve-of-cases" id="toc-time-epicurve-of-cases" class="nav-link" data-scroll-target="#time-epicurve-of-cases">Time: Epicurve of Cases</a></li>
+  </ul></li>
   <li><a href="#join-of-lab-results" id="toc-join-of-lab-results" class="nav-link" data-scroll-target="#join-of-lab-results">2. Join of lab results</a></li>
   </ul>
 </nav>
@@ -193,7 +195,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title">Laboratory Data &amp; Descriptive Analyses</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<div class="quarto-title-block"><div><h1 class="title">Descriptive Analyses &amp; Laboratory Data</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
 <p class="subtitle lead">Carehome Outbreak Exercise</p>
 </div>
 
@@ -241,9 +243,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="descriptive-analyses" class="level2">
 <h2 class="anchored" data-anchor-id="descriptive-analyses">1. Descriptive analyses</h2>
 <p>Description of the sample should follow the same logic of person-place-time that we used for the case definition. But this time, we already defined who is a considered a case and who is not, so we will explore the characteristics that will lead us later to further analyses in the next investigation steps.</p>
-</section>
-<section id="person-attack-proportions" class="level2">
-<h2 class="anchored" data-anchor-id="person-attack-proportions">Person: Attack Proportions</h2>
+<section id="person-attack-proportions" class="level3">
+<h3 class="anchored" data-anchor-id="person-attack-proportions">Person: Attack Proportions</h3>
 <p>We will start with the basics: counts and percentages.</p>
 <p><strong>Action</strong> — What is the overall Attack Proportion? What function can you use to quickly answer this, without worrying too much about sharing any output.</p>
 <ul>
@@ -304,8 +305,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </section>
-<section id="person-age-and-sex-distribution" class="level2">
-<h2 class="anchored" data-anchor-id="person-age-and-sex-distribution">Person: Age and Sex Distribution</h2>
+<section id="person-age-and-sex-distribution" class="level3">
+<h3 class="anchored" data-anchor-id="person-age-and-sex-distribution">Person: Age and Sex Distribution</h3>
 <p>We know about the median ages and sex distribution of cases and non-cases, but we should explore further to find potential differences for example between residents of the care home and their families. We can do that with both a table and a boxplot:</p>
 <p><strong>Action</strong> — Cross-tabulate <code>age</code> and <code>sex</code> by <code>group</code> using <code>tbl_summary()</code>. Don’t worry about exporting this one.</p>
 <p><strong>Action</strong> — Build a boxplot (or violin plot) of <code>age</code> by <code>group</code> to illustrate the finding of the table. For now, just include a single pre-defined theme as the only visual enhancement, don’t worry about further customization.</p>
@@ -335,8 +336,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </section>
-<section id="person-symptoms-by-case-definition" class="level2">
-<h2 class="anchored" data-anchor-id="person-symptoms-by-case-definition">Person: Symptoms by Case Definition</h2>
+<section id="person-symptoms-by-case-definition" class="level3">
+<h3 class="anchored" data-anchor-id="person-symptoms-by-case-definition">Person: Symptoms by Case Definition</h3>
 <p><strong>Action</strong> — Produce a summary table displaying the symptoms among cases and non-cases. Probably you can recycle the vector you created to clean these columns for this task. <em>Which symptom was the more common among cases</em>?</p>
 <p><strong>Extra!</strong> — Create a bar-plot of symptom’s frequency among cases (<em>only if you have time later on</em>)</p>
 <div class="callout callout-style-simple callout-caution no-icon callout-titled">
@@ -385,12 +386,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </section>
-<section id="place-nothing-to-explore-for-now" class="level2">
-<h2 class="anchored" data-anchor-id="place-nothing-to-explore-for-now">Place: nothing to explore for now</h2>
+<section id="place-nothing-to-explore-for-now" class="level3">
+<h3 class="anchored" data-anchor-id="place-nothing-to-explore-for-now">Place: nothing to explore for now</h3>
 <p>Because we are in the context of a single event, place is already accounted with all included attendees. In this particular outbreak, we did not collect any other information that could have impacted the outbreak in terms of place like table distribution, serving times, or attending personnel. All those could constitute elements of place, even if not that straightforward.</p>
 </section>
-<section id="time-epicurve-of-cases" class="level2">
-<h2 class="anchored" data-anchor-id="time-epicurve-of-cases">Time: Epicurve of Cases</h2>
+<section id="time-epicurve-of-cases" class="level3">
+<h3 class="anchored" data-anchor-id="time-epicurve-of-cases">Time: Epicurve of Cases</h3>
 <p>You explored the incubation period distribution to decide about the Case Definition time criteria. Now we have our cases and we should aim to building the outbreak’s epicurve using the <code>onset_datetime</code> we created:</p>
 <p><strong>Action</strong> — Create the epicurve only for cases and using <code>scale_x_datetime()</code> to add 6h breaks</p>
 <p><strong>Action</strong> — Reflect on the difference between the histogram of <code>incubation</code> times we plotted previously and this epicurve</p>
@@ -424,6 +425,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
+</section>
 </section>
 <section id="join-of-lab-results" class="level2">
 <h2 class="anchored" data-anchor-id="join-of-lab-results">2. Join of lab results</h2>
@@ -1124,7 +1126,7 @@ window.onload = function() {
   });
   </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Laboratory Data &amp; Descriptive Analyses"</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Descriptive Analyses &amp; Laboratory Data"</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "Carehome Outbreak Exercise"</span></span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
@@ -1168,7 +1170,7 @@ window.onload = function() {
 <span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a>Description of the sample should follow the same logic of person-place-time that we used for the case definition. But this time, we already defined who is a considered a case and who is not, so we will explore the characteristics that will lead us later to further analyses in the next investigation steps.</span>
 <span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a><span class="fu">## Person: Attack Proportions</span></span>
+<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a><span class="fu">### Person: Attack Proportions</span></span>
 <span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a>We will start with the basics: counts and percentages.</span>
 <span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a></span>
@@ -1225,7 +1227,7 @@ window.onload = function() {
 <span id="cb7-102"><a href="#cb7-102" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb7-103"><a href="#cb7-103" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb7-104"><a href="#cb7-104" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-105"><a href="#cb7-105" aria-hidden="true" tabindex="-1"></a><span class="fu">## Person: Age and Sex Distribution</span></span>
+<span id="cb7-105"><a href="#cb7-105" aria-hidden="true" tabindex="-1"></a><span class="fu">### Person: Age and Sex Distribution</span></span>
 <span id="cb7-106"><a href="#cb7-106" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-107"><a href="#cb7-107" aria-hidden="true" tabindex="-1"></a>We know about the median ages and sex distribution of cases and non-cases, but we should explore further to find potential differences for example between residents of the care home and their families. We can do that with both a table and a boxplot:</span>
 <span id="cb7-108"><a href="#cb7-108" aria-hidden="true" tabindex="-1"></a></span>
@@ -1250,7 +1252,7 @@ window.onload = function() {
 <span id="cb7-127"><a href="#cb7-127" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb7-128"><a href="#cb7-128" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb7-129"><a href="#cb7-129" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-130"><a href="#cb7-130" aria-hidden="true" tabindex="-1"></a><span class="fu">## Person: Symptoms by Case Definition</span></span>
+<span id="cb7-130"><a href="#cb7-130" aria-hidden="true" tabindex="-1"></a><span class="fu">### Person: Symptoms by Case Definition</span></span>
 <span id="cb7-131"><a href="#cb7-131" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-132"><a href="#cb7-132" aria-hidden="true" tabindex="-1"></a>**Action** — Produce a summary table displaying the symptoms among cases and non-cases. Probably you can recycle the vector you created to clean these columns for this task. *Which symptom was the more common among cases*?</span>
 <span id="cb7-133"><a href="#cb7-133" aria-hidden="true" tabindex="-1"></a></span>
@@ -1293,11 +1295,11 @@ window.onload = function() {
 <span id="cb7-170"><a href="#cb7-170" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb7-171"><a href="#cb7-171" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb7-172"><a href="#cb7-172" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-173"><a href="#cb7-173" aria-hidden="true" tabindex="-1"></a><span class="fu">## Place: nothing to explore for now</span></span>
+<span id="cb7-173"><a href="#cb7-173" aria-hidden="true" tabindex="-1"></a><span class="fu">### Place: nothing to explore for now</span></span>
 <span id="cb7-174"><a href="#cb7-174" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-175"><a href="#cb7-175" aria-hidden="true" tabindex="-1"></a>Because we are in the context of a single event, place is already accounted with all included attendees. In this particular outbreak, we did not collect any other information that could have impacted the outbreak in terms of place like table distribution, serving times, or attending personnel. All those could constitute elements of place, even if not that straightforward.</span>
 <span id="cb7-176"><a href="#cb7-176" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-177"><a href="#cb7-177" aria-hidden="true" tabindex="-1"></a><span class="fu">## Time: Epicurve of Cases</span></span>
+<span id="cb7-177"><a href="#cb7-177" aria-hidden="true" tabindex="-1"></a><span class="fu">### Time: Epicurve of Cases</span></span>
 <span id="cb7-178"><a href="#cb7-178" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-179"><a href="#cb7-179" aria-hidden="true" tabindex="-1"></a>You explored the incubation period distribution to decide about the Case Definition time criteria. Now we have our cases and we should aim to building the outbreak's epicurve using the <span class="in">`onset_datetime`</span> we created:</span>
 <span id="cb7-180"><a href="#cb7-180" aria-hidden="true" tabindex="-1"></a></span>
