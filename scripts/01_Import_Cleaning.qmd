@@ -1,0 +1,281 @@
+---
+title: "Data Import & Cleaning"
+subtitle: "Carehome Outbreak Exercise"
+---
+
+```{r setup}
+#| include: false
+pacman::p_load(tidyverse, rio, here, lubridate, janitor, webexercises)
+```
+
+## Set yourself up
+
+When starting a new task in R, you need to set up your workspace, folder structure and R Project before any other thing. Then, creating scripts, activating libraries and loading data will feel natural and smooth. [You have practiced this already](https://epiet.github.io/IntroToRCourse/scripts/S1E2.html), but a refresher is always helpful:
+
+1.  Create a folder (or choose an existing one) to become your **Project Folder** 📂
+
+2.  Inside your project folder, create the recommended sub-folders for **scripts**, **data**, and **outputs** 📚\
+    (*that includes the raw and clean data folders, remember!*)
+
+3.  Open RStudio \> New Project \> Existing Directory \> Create to set up your **R Project** 💼
+
+Now you are truly set-up! Copy the exercise's dataframes to the `<raw>` data folder to keep everything tidy and isolated.
+
+Open a new script, and immediately save it in the `<scripts>` folder. You can name it `01_Data_Cleaning` or something similar, to your own taste. It will become a good practice to number your scripts while clearly separating the different tasks you will perform within each of them.
+
+### Initialize your script
+
+Every script begins the same, there is no trick to it:
+
+1.  Activate libraries
+
+2.  Load data
+
+The order here does matter, of course. Because you will need libraries to locate your files in the computer and read them to R automatically, right? Which libraries exactly should you activate first? You can start with something like this:
+
+``` r
+## Check wether pacman is installed and activate it or install and activate otherwise
+if(!require("pacman")){install.packages(pacman)}
+
+## Activate libraries with pacman
+pacman::p_load(
+  here,          # to create file paths
+  rio,           # to import data
+  janitor,       # tools for data cleaning and exploration
+  gtsummary,     # for summary tables
+  skimr,         # to explore dataframes  [NEW ONE]
+  tidyverse,     # for data manipulation (always the last library!!!)
+  
+  update = T     # to make sure libraries are updated if new versions exist
+)
+
+## Import data using rio and here
+raw <- import(here("data", "raw", "carehome_familyday_raw.csv"))
+```
+
+If you ask yourself which libraries should be activated at the very beginning, the answer is quite straightforward: `rio`, `here` and `tidyverse`. As you realize more libraries are needed later, you can always come back, write them up and execute `p_load()` as many time as needed - it's free!
+
+That is enough preparation, let's dive in into exploring our data and planning the cleaning process
+
+## 1. Explore the Data
+
+When opening a new dataframe for the first time, you need to explore your variables with a general overview. Learn their class, their values or ranges, missingness, and identify the inconsistencies that need fixing. For that, you know already of functions like `str()`, `glimpse()` or `summary()`.
+
+Today I want to introduce to you a new library: `skimr` and its function `skim()`. It takes a dataframe as the main argument, and will provide you with an extensive overview of its variables. Let's see this in action:
+
+**Action** — Check the dimensions and structure of your raw data using `skim()`. Don't assign this operation to any object, just let it print on the console and see.
+
+The resulting output can be massive: overall information like rows, cols, number of variable per type and then a fine-grained description of variables grouped by their type, with adequate information for each, especially character/numeric ones. Answer this question just from the `skim()` output:
+
+How many rows does `raw` has? `r fitb(167)`\
+How many numeric variables are present? `r fitb(26)`\
+How many entries are missing information on consumed food? `r fitb(6)`\
+How many unique identifiers (`id`) are present? `r fitb(167)`\
+How many entries has missing onset day info? `r fitb(0)`\
+And how many has information on onset day? `r fitb(61)`\
+How many entries has missing hour of symptom start? `r fitb(106)`
+
+You see - there is a lot you can learn from your data with a single function call
+
+**Action** — Would you clean variables names?
+
+**Action** — Do you spot something odd that warrants further investigation for cleaning? Can you think of the needed transformations that are required?
+
+::: {.callout-tip collapse="T"}
+## Hint - Most common cleaning needs
+
+Among the very first things you should check for any dataframe is **variable class**, and its implications. Numeric variables coded as character, or viceversa. Dates as characters. Characters that should have an order - factors.
+
+The other key issue is about **extreme or implausible values** for your variables. This will depend on every variable, of course, but a classical one are age values. Also, don't forget **categories** within character values. All of them should be explored before running into any further analysis.
+:::
+
+::: {.callout-caution collapse="true" appearance="minimal" icon="false"}
+## See the solution
+
+Below you can find one possible solution for exploring variables. You may use different functions or approaches, because you already know a few of them. As long as you are able to understand your data and spot cleaning needs, that's perfectly fine.
+
+``` r
+## Dataframe summary
+skimr::skim(raw)
+
+## Further exploring
+range(raw$age)  # see min and max values of a numeric vector
+
+unique(raw$sex)      # Main present categories with unique
+unique(raw$group)
+unique(raw$buffet)
+
+tabyl(raw$vomiting)    # check some symptoms and fodd item variables with tabyl
+tabyl(raw$croquettes)
+tabyl(raw$croquettesD)
+```
+
+After exploring the data, you should have realized at least three things requiring cleaning:
+
+1.  **`age`**: some obviously implausible values are present and we need to decide whether they can be fixed, turned into NAs or deleted
+
+2.  **dates**: we have two of them that require transformation - and potentially a merge
+
+3.  **categories as numbers:** practically all symptoms and food item variables were read as numbers because they are coded as 0-1. We should fix that turning them into factors
+:::
+
+## 2. Data Cleaning
+
+### Fixing `age`
+
+Look at the range of `age`: some values are clearly impossible, and likely represent typos or writing mistakes. Decide, for each implausible value, whether it's an obvious typo you can confidently correct, or one you can't.
+
+**Action** — Tables are more than outputs for other people. They assist you during your work. For example, try to cross-tabulate `age` and `group` to find about about the nature of the mistakes, and get inspired about potential solutions.
+
+**Action** — Clean accordingly to the previous step using `case_when()` and the adequate conditions so only the affected rows are modified. Start working on a new object named `clean`. *Would you apply the same fix when the same implausible value affects a resident and a family member*?
+
+::: {.callout-caution collapse="true" appearance="minimal"}
+## See the solution
+
+``` r
+# Crosstabulate age and group using janitor to find inplausible values
+raw %>% tabyl(age, group)
+
+# Fix the age variable whit case_when()
+clean <- raw %>% 
+  mutate(age = case_when(
+    # negative age value to positive
+    age == -35  ~ 35, 
+    # if 190 years and family member, assume 19 years typo
+    age == 190 & group == "family"  ~ 19, 
+    # if 190 years and resident, assume 90 years typo
+    age == 190 & group == "resident"  ~ 90,
+    # everyone else stays the same
+    .default = age
+  ))
+```
+
+Not every bad value has an obvious fix. A rule like *"correct it if the error is unambiguous (an extra digit, a stray minus sign); set it to `NA` if you'd just be guessing"* is a defensible, explicit policy - and one you can state in a line of code, not just in your head.
+
+Hadn't you cross-tabulated by `group` first, relying only on the `age` range, your fixing may have looked different. Use the information available whenever possible.
+:::
+
+### Fixing dates
+
+We [learned about working with dates](https://epiet.github.io/IntroToRCourse/scripts/S3E2.html#fixing-dates) using `lubridate` and how the available functions are chose based on our date variable structure, e.g. *year-month-day* for a "2026-09-13" date. Even if our date variable is in text format, the same logic remains. But what to do with the `starthour` variable? Once again, `lubridate` is prepared to handle that with an `hours()` function
+
+**Action** — Change the variable class of `dayonset` and `starthour` to `<date>` format using lubridate. Include it in your `clean` object you started before
+
+::: {.callout-caution collapse="true" appearance="minimal"}
+## See the solution
+
+You can include this cleaning step by either updating the `clean` object from the previous step or by adding it with a pipe in the first cleaning chain starting with `raw`.
+
+``` r
+# Update the clean object from before
+clean <- clean %>% 
+  mutate(
+    dayonset = dmy(dayonset),
+    starthour = hours(starthour)
+  ) 
+
+
+# Or add a new pipe to your cleaning chain
+clean <- raw %>% 
+  mutate(age = case_when(
+    # negative age value to positive
+    age == -35  ~ 35, 
+    # if 190 years and family member, assume 19 years typo
+    age == 190 & group == "family"  ~ 19, 
+    # if 190 years and resident, assume 90 years typo
+    age == 190 & group == "resident"  ~ 90,
+    # everyone else stays the same
+    .default = age
+  )) %>% 
+  # Fix dates format
+  mutate(
+    dayonset = dmy(dayonset),
+    starthour = hours(starthour)
+  ) 
+```
+:::
+
+### Fixing symptoms and food variables
+
+Interestingly, we have a fair number of columns that are coded the same:
+
+- Symptoms and Food are binary 0-1 (yes or no) columns
+
+- FoodD columns indicate the amount of the consumed food, all of them range between 0 (no or very little consumption) to 3 (more than 1 piece)
+
+Fixing them one by one inside a massive mutate is possible, sure. But also extremely boring, problematic and subject to writing typos because of repetition. We can do better using the Tidyverse helper function `across()`, that facilitates applying the same transformation to multiple columns at once inside `mutate()`and `summarise()` calls
+
+It works by specifying a set of colums and the function to apply to all of them, like this:
+
+``` r
+clean <- raw %>% 
+  mutate(across(                           # direct call without a name
+    .cols = c(var1, var2, var5, var14),    # set of variables to modify
+    .fns = ~ as.character(.)    # we use a tilde (~) to declare the function
+  ))                            # and a point (.) to indicate data from .cols
+```
+
+To declare the columns to modify, you can use more helper functions that answer to the question "*Which of the existing variables are picked?*". The answer can be: "*all of these variables*", "*only those of class character*", "*those that begin with the character 'date\_'* ", "*those that has a letter "D" at the end of their name*"... and so on \[pure grammar model, isn't it?\]
+
+#### Change all variables inside a vector
+
+To begin with, we create a vector `binary_cols` that contains the name of all the binary 0-1 variables in our data we want to change:
+
+``` r
+binary_cols <- c("diarrhoea", "vomiting", "abdo", "fever", "nausea",
+                 "buffet")
+```
+
+Now we will use the selecting function `all_of()` to declare the columns to modify inside `across()`. The function to apply will be `factor()` over all of them. Remember to include the arguments `levels`and `labels` to indicate 0 = "No" and 1 = "Yes"
+
+**Action** — Convert all of the binary variables to labelled factors ("No"/"Yes") in one step.
+
+::: {.callout-caution collapse="true" appearance="minimal"}
+## See the solution
+
+``` r
+clean <- clean %>% 
+  mutate(across(
+    # Transform all variables in the binary_cols vector
+    .cols = all_of(binary_cols),
+    # By transforming then into 0-1 factors with "No"-"Yes" labels
+    # Base R version of transforming into factor
+    .fns = ~ factor(., 
+                    levels = c(0, 1),
+                    labels = c("No", "Yes"))
+  ))
+
+#check
+class(clean$diarrhoea)
+```
+:::
+
+#### Change food dose using a name pattern
+
+For the food-dose variables, we can take advantage of the way they were named as they always include a final capital "D". The helper function `ends_with()` becomes useful for this:
+
+``` r
+clean <- clean %>% 
+  mutate(across(
+    .cols = ends_with("D", ignore.case = FALSE),
+    # Tidyverse version to convert into factor
+    .fns = ~ as_factor(.)  
+  ))
+
+#check
+class(clean$croquettesD)
+```
+
+The added the `ignore.case` argument to FALSE to force the function to differentiate between capital "D" and any d (default behavior). Because this time we were not interested in adding labels to the factor, we could rely on the tidyverse `as_factor()` function.
+
+**Action** — Add the food-dose variable mutate to the cleaning pipe or update the `clean` object to keep the changes
+
+## Save and Export the cleaned dataframe
+
+With these cleaning steps we can now save a new dataframe to continue working from it. Use the `export()` function with `here()` to define the path and filename. Because we created factors, the only format we can use is the R native format **.rds**
+
+**Action** — Save the cleaned dataframe as `carehome_clean1.rds` in the clean data folder
+
+``` {.r code-fold="T"}
+export(clean, here("data", "clean", "carehome_clean1.rds"))
+```

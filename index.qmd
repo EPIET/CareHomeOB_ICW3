@@ -1,0 +1,24 @@
+---
+title: "Gastroenteritis Outbreak Following a Family Day at a Care Home"
+subtitle: "ECDC EPIET & EUPHEM Program - Intro Course 2026"
+---
+
+## Outbreak investigation in R
+
+Only a few weeks ago you started building your R toolkit for data analysis in field epidemiology, from data import and cleaning to tables and graphs. Today, everything you practiced as standalone exercises comes together in the form a single, continuous **outbreak investigation** where you are the epidemiologist in charge of the analysis.
+
+Real-life investigations are not about coding. However, when the time comes, you will benefit from having practiced an structured approach to analysis, so you can really focus on the findings and their implications, rather than just the code or the limited time you always have during outbreak situations. Today, you will ensemble many bits you have already practiced - and some new tricks and develop a complete framework on your own.
+
+### Scenario setting
+
+> *"Residencia Los Almendros" is a tiny, lovely care home for the elderly, located somewhere in the Southern coast of Spain. On September 13th, they held their annual Family Day, a social day when residents and their families come together to share a day of fun activities, music and an outdoor buffet lunch. The day was a perfect success. Two days later, however, the local public health authorities started receiving reports of gastroenteritis cases among attendees of the Family Day. Immediately, an outbreak was declared and investigations started.*
+
+A week has passed by and investigation progresses. A questionnaire was developed and telephone interviews took place. Electronic health records were consulted to assess disease severity and collect clinical information. Some samples could be collected and sent for microbiological analysis. Luckily, nobody developed a severe presentation, and only two cases remain admitted for treatment.
+
+You, as the newly incorporated epidemiologist to the team, are tasked with exploring and analyzing the data collected so far. For that, you have three files:
+
+- `carehome_familyday_raw.csv` - the food and symptom questionnaire completed by everyone who attended
+- `carehome_familyday_lab.csv` - stool sample results for a subset of attendees
+- `carehome_familyday_codebook.csv` - information about each collected variable and codification
+
+Your first task is to get these into R, clean them up, and decide who counts as a case. The rest of the investigation depends on that decision.

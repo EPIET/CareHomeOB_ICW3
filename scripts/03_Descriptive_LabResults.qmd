@@ -1,0 +1,228 @@
+---
+title: "Laboratory Data & Descriptive Analyses"
+subtitle: "Carehome Outbreak Exercise"
+---
+
+```{r}
+#| include: false
+if(!require("pacman")){install.packages(pacman)}
+pacman::p_load(rio, here, webexercises, tidyverse)
+```
+
+## Set yourself up
+
+For this exercise, you should continue right after Case Definition, with a dataset containing the variable `case` with the adequate number of cases (49). To make things easier, you have a second backup file containing the right data to continue working error-free: `carehome_clean2.rds`
+
+- Start a fresh new script for descriptive analysis, give it the name you prefer, but make it self-explanatory and number preferably
+
+- Like always, you will first activate your libraries and load your data. Today, in addition to the cleaned backup data, you will load the lab data containing microbiological results of the patient's samples. Load it at the beginning as well:
+
+``` r
+## Check wether pacman is installed and activate it or install and activate otherwise
+if(!require("pacman")){install.packages(pacman)}
+
+## Activate libraries with pacman
+pacman::p_load(
+  here,          # to create file paths
+  rio,           # to import data
+  janitor,       # tools for data cleaning and exploration
+  flextable,     # for formatting tables
+  gtsummary,     # for summary tables
+  skimr,         # to explore dataframes  [NEW ONE]
+  tidyverse,     # for data manipulation (always the last library!!!)
+  
+  update = T     # to make sure libraries are updated if new versions exist
+)
+
+## Import clean data using rio and here
+clean <- import(here("data", "backup", "carehome_clean2.rds"), trust = T)
+lab <- import(here("data", "raw", "carehome_familyday_lab.csv"))
+```
+
+## 1. Descriptive analyses
+
+Description of the sample should follow the same logic of person-place-time that we used for the case definition. But this time, we already defined who is a considered a case and who is not, so we will explore the characteristics that will lead us later to further analyses in the next investigation steps.
+
+## Person: Attack Proportions
+
+We will start with the basics: counts and percentages.
+
+**Action** — What is the overall Attack Proportion? What function can you use to quickly answer this, without worrying too much about sharing any output.
+
+- What is the overall Attack Proportion of this outbreak? `r fitb(30)`
+
+**Action** — Create a summary table with `tbl_summary()` exploring the distribution of age, sex and group among cases and non-cases. Answer the following questions with the basic table for now:
+
+- What is the Attack Proportion among females? `r fitb(49)`
+- What is the Attack Proportion among residents? `r fitb(20)`
+- What is the Median age of all attendees to the Family Day? `r fitb(46)`
+
+**Action** — Use the code below to produce a single summary table, enhanced and ready-to-export to Word:
+
+::: {.callout-caution collapse="true" appearance="minimal" icon="false"}
+## Ready-to-export table, ready-to-reuse code
+
+The code below notably improves the tbl_summary() output. It is also a more complex code that includes html and markdown notation using a glue approach. There is a chance none of those words were even familiar for you. And that's ok, you don't need to understand it right now.
+
+What you need to understand is that, by **copying this code**, you can adapt it to all your future tables only by changing the name and amount of labels and headers, and that is valuable
+
+``` r
+## Quick way to see the percentage of cases among the total participants
+janitor::tabyl(clean, case)
+
+## Complete Table Summary of Age, Sex and Group counts
+table1 <- clean %>% 
+  # only columns of interest
+  select(case, age, sex, group) %>% 
+  tbl_summary(by = case,
+              # modify row headers
+              label = list(
+                age ~ "Age",
+                sex ~ "Sex", 
+                group ~ "Group"
+              )) %>% 
+  bold_labels() %>% 
+  # add total column
+  add_overall() %>% 
+  # customize header labels and appearance
+  modify_header(
+    label = "**Characteristic**",
+    stat_0 = "**Overall** \n **N** = {n} ({style_percent(p)}%)",
+    stat_1 = "**Non-case** \n **N** = {n} ({style_percent(p)}%)",
+    stat_2 = "**Case** \n **N** = {n} ({style_percent(p)}%)", 
+  ) 
+
+# Export to Word using flextable
+table1 %>% 
+  as_flex_table() %>% 
+  autofit() %>% 
+  save_as_docx(path = here("outputs", "Table_1.docx"))
+```
+:::
+
+## Person: Age and Sex Distribution
+
+We know about the median ages and sex distribution of cases and non-cases, but we should explore further to find potential differences for example between residents of the care home and their families. We can do that with both a table and a boxplot:
+
+**Action** — Cross-tabulate `age` and `sex` by `group` using `tbl_summary()`. Don't worry about exporting this one.
+
+**Action** — Build a boxplot (or violin plot) of `age` by `group` to illustrate the finding of the table. For now, just include a single pre-defined theme as the only visual enhancement, don't worry about further customization.
+
+::: {.callout-caution collapse="true" appearance="minimal" icon="false"}
+## See the solution
+
+``` r
+# Table with Age and Sex distribution among residents and family members
+clean %>% 
+  select(group, age, sex) %>% 
+  tbl_summary(by = group)
+
+# Violin plot of age among residentes and family members
+clean %>% 
+  ggplot(aes(x = group, y = age)) +
+  geom_violin() +
+  theme_bw()
+```
+:::
+
+## Person: Symptoms by Case Definition
+
+**Action** — Produce a summary table displaying the symptoms among cases and non-cases. Probably you can recycle the vector you created to clean these columns for this task. *Which symptom was the more common among cases*?
+
+**Extra!** — Create a bar-plot of symptom's frequency among cases (*only if you have time later on*)
+
+::: {.callout-caution collapse="true" appearance="minimal" icon="false"}
+## See the solution
+
+``` r
+# Table summary of symptom distribution by case definition
+clean %>% 
+  select(all_of(symptoms), case) %>% 
+  tbl_summary(by = case) %>% 
+  bold_labels() %>% 
+  italicize_labels()
+
+# Barplot of symptom distribution among cases
+clean %>% 
+  select(symptoms, case) %>% 
+  # we need to pivot to long format for the counts
+  pivot_longer(
+    all_of(symptoms),  
+    names_to = "symptom",
+    values_to = "present"
+  ) %>% 
+  # only interested in symptoms among cases
+  filter(present == "Yes", 
+         case == 1) %>%    
+  # Start of the graph
+  ggplot(aes(
+    # this trick arranges categories by frequency automatically 
+    y = fct_infreq(symptom))
+    ) +
+  geom_bar(fill = "darkred",   # some aesthetics
+           alpha = 0.70) +
+  labs(x = "Number of cases",  # custom labels
+       y = "") +
+  # predefined theme, as always
+  theme_minimal()
+```
+:::
+
+## Place: nothing to explore for now
+
+Because we are in the context of a single event, place is already accounted with all included attendees. In this particular outbreak, we did not collect any other information that could have impacted the outbreak in terms of place like table distribution, serving times, or attending personnel. All those could constitute elements of place, even if not that straightforward.
+
+## Time: Epicurve of Cases
+
+You explored the incubation period distribution to decide about the Case Definition time criteria. Now we have our cases and we should aim to building the outbreak's epicurve using the `onset_datetime` we created:
+
+**Action** — Create the epicurve only for cases and using `scale_x_datetime()` to add 6h breaks
+
+**Action** — Reflect on the difference between the histogram of `incubation` times we plotted previously and this epicurve
+
+::: {.callout-caution collapse="true" appearance="minimal" icon="false"}
+## See the solution
+
+``` r
+# Epicurve with datetime customization
+clean %>%  
+  # Only cases
+  filter(case == 1) %>% 
+  # Add factor onset_datetime to ggplot aesthetic:
+  ggplot(aes(x = onset_datetime)) + 
+  geom_histogram() +
+  # select 6h breaks with custom date-time labels
+  scale_x_datetime(
+    date_breaks = "6 hours",
+    date_labels =  "%d %b\n%H:%M") +
+  # Update x and y axis labels
+  labs(x = "Date and time of onset symptoms", 
+       y = "Number of cases") +
+  theme_bw()
+```
+:::
+
+## 2. Join of lab results
+
+The lab dataframe contains 66 entries with `sample_dates` and `salmonella_results`, the only positive result among all tested GI pathogens. The results are linked to the same patient id recorded in the cohort dataframe. You [learned about joins quite recentl](https://epiet.github.io/IntroToRCourse/scripts/S6E1.html)y, so take a look if you don't remember about it:
+
+**Action** — Perform the join of the lab results. What happened to the row with no lab results at all?
+
+**Action** — Cross-tabulate `case` against `salmonella_result`. How would you interpret these results?
+
+::: {.callout-caution collapse="true" appearance="minimal" icon="false"}
+### See the solution
+
+``` r
+# Simple left join of lab data by person's id
+clean <- clean %>% 
+  left_join(lab, 
+            by = "id")
+
+# Cross-tabulation of case and lab result
+clean %>% 
+  tabyl(case, salmonella_result)
+```
+
+Not every case has a positive test result. That is perfectly fine and common, as microbiology sampling is subject to limitations such as the time elapsed from clinical onset until collection, sensitivity, and other limitating factors. In this outbreak, laboratory confirmation was not part of the Case Definition and, therefore, this information remains confirmatory of the causative agent of the outbreak.
+:::

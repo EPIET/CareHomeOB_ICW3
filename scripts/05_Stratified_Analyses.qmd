@@ -1,0 +1,71 @@
+---
+title: "Stratified Analysis"
+subtitle: "Carehome Outbreak Exercise"
+---
+
+```{r}
+#| include: false
+pacman::p_load(
+  here,          # to create file paths
+  rio,           # to import data
+  janitor,       # tools for data cleaning and exploration
+  gtsummary,     # for summary tables
+  skimr,         # to explore dataframes  [NEW ONE]
+  EpiStats,      # for univariate epidemiological analyses
+  epitools,      # for performing risk ratio estimation
+  tidyverse)
+
+clean <- import(here("data", "backup", "carehome_clean2.rds"), trust = T)
+```
+
+## Set yourself up
+
+One more time, start with the backup data `carehome_clean2.rds`. Start a new script o continue working on the previous one, but ideally start a new one. The libraries are the same than the previous exercise:
+
+``` r
+## Check wether pacman is installed and activate it or install and activate otherwise
+if(!require("pacman")){install.packages(pacman)}
+
+## Activate libraries with pacman
+pacman::p_load(
+  here,          # to create file paths
+  rio,           # to import data
+  janitor,       # tools for data cleaning and exploration
+  gtsummary,     # for summary tables
+  skimr,         # to explore dataframes  [NEW ONE]
+  EpiStats,      # for univariate epidemiological analyses
+  epitools,      # for performing risk ratio estimation
+  tidyverse,     # for data manipulation (always the last library!!!)
+  
+  update = T     # to make sure libraries are updated if new versions exist
+)
+
+## Import clean data using rio and here
+clean <- import(here("data", "backup", "carehome_clean2.rds"), trust = T)
+```
+
+## 1. Consider Confounding and Effect Modificiation
+
+Once you have identified food items associated with elevated risk of becoming a case, the next step is to consider any potential confounding related with that risk.
+
+Confounding and effect modification occurs when the association between one variable and the outcome changes in the presence/absence of a third variable. We need stratification to test this possibility, and we can either explore variable by variable (not really suitable with medium-large datasets) or test all of them at once through regression.
+
+For this exercise, we will use `csinter()` from `EpiStats` to manually explore how the association varies across the levels of a third one. In univariate analysis, the associations that emerge as both significant and non-significant can be confounded and the direction or magnitude of the effect is subject to change. In the future, you will build regression models with all suspected variables to account for this extent.
+
+## Spanish tortilla as exposure of interest
+
+Spanish tortilla came out second in RR during univariate analysis, so we can explore whether its effect is modified by consuming russian salad, the main variable in terms of risk. So the question is: *does eating russian salad modifies the association between eating tortilla and becoming a case*?
+
+```{r}
+## Stratified analysis between tortilla and becoming a case, by russian salad consumption
+csinter(x = clean, 
+        cases = "case", 
+        exposure = "spanish_tortilla", 
+        by = "russian_salad")
+```
+
+**Action** — Is the relationship between spanish tortilla and becoming a case confounded by the consumption of russian salad?
+
+**Action** — Check whether an association exists between eating russian salad and spanish tortilla
+
+**Action** — Conversely, is the association between russian salad and becoming a case confounded by the consumption of spanish tortilla? Discuss the result

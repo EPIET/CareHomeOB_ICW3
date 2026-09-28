@@ -1,0 +1,166 @@
+---
+title: "Univariate Analysis"
+subtitle: "Carehome Outbreak Exercise"
+---
+
+```{r}
+#| include: false
+pacman::p_load(
+  here,          # to create file paths
+  rio,           # to import data
+  janitor,       # tools for data cleaning and exploration
+  gtsummary,     # for summary tables
+  skimr,         # to explore dataframes  [NEW ONE]
+  EpiStats,      # for univariate epidemiological analyses
+  epitools,      # for performing risk ratio estimation
+  tidyverse)
+
+clean <- import(here("data", "backup", "carehome_clean2.rds"), trust = T)
+```
+
+## Set yourself up
+
+You will start this exercise with the same backup data `carehome_clean2.rds`, since we won't need the lab results to continue. If you saved your dataframe after joining, you can also use it, but we recommend you to load the fresh backup data to prevent any possible errors:
+
+- Start **a new scrip** for this exercise, as you will be performing your first analyses that require specific libraries to install and activate
+
+- Load the following libraries and your backup data:
+
+``` r
+## Check wether pacman is installed and activate it or install and activate otherwise
+if(!require("pacman")){install.packages(pacman)}
+
+## Activate libraries with pacman
+pacman::p_load(
+  here,          # to create file paths
+  rio,           # to import data
+  janitor,       # tools for data cleaning and exploration
+  gtsummary,     # for summary tables
+  skimr,         # to explore dataframes  [NEW ONE]
+  EpiStats,      # for univariate epidemiological analyses
+  epitools,      # for performing risk ratio estimation
+  tidyverse,     # for data manipulation (always the last library!!!)
+  
+  update = T     # to make sure libraries are updated if new versions exist
+)
+
+## Import clean data using rio and here
+clean <- import(here("data", "backup", "carehome_clean2.rds"), trust = T)
+```
+
+## 1. Factors associated with becoming a case
+
+You will start the analysis by exploring associations between some non-food variables and becoming a `case`. Several methods are available to you, but let's explore the one you already now first, by using `gtsummary::tbl_summary()`:
+
+**Action** — Explore the non-food variables `age`, `sex` and `group` as the first step
+
+- Build a `tbl_summary()` stratified by `case` variable and include the `add_p()` call to perform a statistical comparison
+
+- Is any of the variables associated with becoming a `case` in our data?
+
+**Action** — Can you identify the statistical test employed for each variable? Why would the Wilcoxon rank sum test be used here?
+
+::: {.callout-caution collapse="true" appearance="minimal" icon="false"}
+### See the solution
+
+``` r
+# Perform statistical comparisson table using tbl_summary()
+exp_agesexgroup_table <- clean %>% 
+  select(case, age, sex, group) %>%   # variables of interest only
+  tbl_summary(by = case) %>%          # stratifying variable
+  add_p() %>%                         # perform statistical comparisson
+  bold_labels()                       # add some visuals
+
+# see table
+exp_agesexgroup_table
+```
+
+The Wilcoxon test was decided by `tbl_summary()` as it identified `age` to be non-normally distributed. You can also check it yourself with base r functions:
+
+``` r
+# Check if age overall follows a normal distribution:
+shapiro.test(clean$age)
+
+# Perform Wilcoxon rank sum test on age and sex:
+wilcox.test(age ~ case, data = clean)
+
+# Chi square test by hand, for demosntration
+chisq.test(clean$sex, clean$case)
+chisq.test(clean$group, clean$case)
+```
+
+**Conclusion**: `age`, `sex` and `group` were not significantly associated with becoming a case, i.e., we have not enough evidence to conclude that there was some differentiated exposure or behavior between attendees based on these characteristics. This can be interpreted like: they were all exposed to the same food items and showed no preference based on their age, sex or group
+:::
+
+## 2. Risk associated with food exposure
+
+### Item by Item
+
+To asses the relationship between the different food items and the risk of becoming a case, we will calculate **risk ratios and 95% confidence intervals**, food by food. For this, we will use the `EpiStats` package, one of the many existing libraries for epidemiology:
+
+The `CS()` function builds the 2x2 table between an exposure and an outcome, that we declare as quoted arguments
+
+```{r}
+# Calculate risk diffrence, risk ratios and attributable fraction among exposed
+EpiStats::CS(clean,    # data
+             "case",   # outcome variable, quoted
+             "jamon")  # exposure variable, quoted
+```
+
+**Action** — Perform the univariate risk calculation over two other food items of your choice and interpret the results
+
+::: {.callout-important collapse="true"}
+## Interpret the results of CS()
+
+The outputs of `CS()`consist on two tables called \$df1 and \$df2 when printed in the console.
+
+The first one is the 2x2 contingency table with exposed-unexposed and cases-non cases and the overall risk in each strata. For `jamon`, the risk of becoming a case was 30% for those who ate it, and 32% for those who didn't.
+
+The second table contain different risk estimators together with their 95% confidence interval:
+
+- **Risk difference:** is the crude difference between the risk of becoming a case in the exposed and the unexposed.
+
+- **Risk ratio:** relative measure of how higher or lower the risk among one group compared with the other.
+
+- **Attributable fraction** among the exposed and the population: proportion of the cases that can be explained with eating jamon.
+
+We cannot establish the existence of an association between eating jamon and becoming a case.
+:::
+
+### All items at once (univariate)
+
+You could also explore all food items at once with a single function to get a better overview in a single go, by creating a vector of food variables and passing it to the `CSTable()` function of the same `EpiStats` libraries:
+
+``` r
+# Food vector
+food <- c("russian_salad", "spanish_tortilla", "jamon", "chicken",
+          "watermelon", "wine", "water", "croquettes", "cheese")
+
+# Risk ratio table for all food items
+CSTable(clean, 
+        "case", 
+        food)    # vector of exposures
+```
+
+**Action** — Read and Interpret the results. Do you have any potential culprit hypothesis?
+
+**Optional** — How would you turn the output from `CSTable()` into a ready-to-share table? Maybe you can use a bit of AI for this challenge.
+
+## 3. Dose-response relationship
+
+The questionnaire also included questions about the amount of each food item consumed, which gives us the chance of exploring whether a dose-response relationship exist. We will only explore `russian_salad` and `spanish_tortilla` as the only food items with increased risk.
+
+You will use the library `epitools` with the function `riskratio()` because `CS()` can only handle binary (i.e., 2x2) tables, while dose-response include three categories already. The function works quite similarly:
+
+``` r
+# Calculate Risk Ratios by each consumption level, and associated p values
+epitools::riskratio(clean$russian_saladD,                     
+                    clean$case,                     
+                    conf.level = 0.95)
+
+epitools::riskratio(clean$spanish_tortillaD,                     
+                    clean$case,                     
+                    conf.level = 0.95)
+```
+
+**Action** — Can you affirm that a dose-response relationship exist for any of the two food items? How does it affect your overall hypotheses of association?
