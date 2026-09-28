@@ -7,7 +7,7 @@ subtitle: "ECDC EPIET & EUPHEM Program - Intro Course 2026"
 
 Only a few weeks ago you started building your R toolkit for data analysis in field epidemiology, from data import and cleaning to tables and graphs. Today, everything you practiced as standalone exercises comes together in the form a single, continuous **outbreak investigation** where you are the epidemiologist in charge of the analysis.
 
-Real-life investigations are not about coding. However, when the time comes, you will benefit from having practiced an structured approach to analysis, so you can really focus on the findings and their implications, rather than just the code or the limited time you always have during outbreak situations. Today, you will ensemble many bits you have already practiced - and some new tricks and develop a complete framework on your own.
+Real-life investigations are not about coding. However, when the time comes, you will benefit from having practiced a structured approach to analysis, so you can really focus on the findings and their implications, rather than just the code or the limited time you always have during outbreak situations. Today, you will assemble many bits you have already practiced - and some new tricks and develop a complete framework on your own.
 
 ### Scenario setting
 
