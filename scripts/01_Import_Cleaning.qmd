@@ -17,7 +17,7 @@ When starting a new task in R, you need to set up your workspace, folder structu
 2.  Inside your project folder, create the recommended sub-folders for **scripts**, **data**, and **outputs** 📚\
     (*that includes the raw and clean data folders, remember!*)
 
-    - [Download](https://github.com/EPIET/CareHomeOB_ICW3/raw/refs/heads/main/data/data.rar) the course's data files and backups and store them accordingly
+    - [Download](https://github.com/EPIET/CareHomeOB_ICW3/raw/refs/heads/main/data/data.rar) the course's data files and backups, extract them and store them accordingly
 
 3.  Open RStudio \> New Project \> Existing Directory \> Create to set up your **R Project** 💼
 
@@ -203,11 +203,11 @@ Interestingly, we have a fair number of columns that are coded the same:
 
 - Symptoms and Food are binary 0-1 (yes or no) columns
 
-- FoodD columns indicate the amount of the consumed food, all of them range between 0 (no or very little consumption) to 3 (more than 1 piece)
+- Food columns indicate the amount of the consumed food, all of them range between 0 (no or very little consumption) to 3 (more than 1 piece)
 
-Fixing them one by one inside a massive mutate is possible, sure. But also extremely boring, problematic and subject to writing typos because of repetition. We can do better using the Tidyverse helper function `across()`, that facilitates applying the same transformation to multiple columns at once inside `mutate()`and `summarise()` calls
+Fixing them one by one inside a massive mutate is possible, sure. But also extremely boring, problematic and subject to writing typos because of repetition. We can do better using the Tidyverse helper function `across()`, that facilitates applying the same transformation to multiple columns at once inside `mutate()`and `summarise()` calls.
 
-It works by specifying a set of colums and the function to apply to all of them, like this:
+It works by specifying a set of columns and the function to apply to all of them, like this:
 
 ``` r
 clean <- raw %>% 

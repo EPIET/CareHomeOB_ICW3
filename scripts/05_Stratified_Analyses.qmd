@@ -20,7 +20,7 @@ clean <- import(here("data", "backup", "carehome_clean2.rds"), trust = T)
 
 ## Set yourself up
 
-One more time, start with the backup data `carehome_clean2.rds`. Start a new script o continue working on the previous one, but ideally start a new one. The libraries are the same than the previous exercise:
+One more time, start with the backup data `carehome_clean2.rds`. Start a new script or continue working on the previous one, but ideally start a new one. The libraries are the same than the previous exercise:
 
 ``` r
 ## Check wether pacman is installed and activate it or install and activate otherwise
@@ -44,9 +44,9 @@ pacman::p_load(
 clean <- import(here("data", "backup", "carehome_clean2.rds"), trust = T)
 ```
 
-## 1. Consider Confounding and Effect Modificiation
+## 1. Consider Confounding and Effect Modification
 
-Once you have identified food items associated with elevated risk of becoming a case, the next step is to consider any potential confounding related with that risk.
+Once you have identified food items associated with an elevated risk of becoming a case, the next step is to consider any potential confounding related with that risk.
 
 Confounding and effect modification occurs when the association between one variable and the outcome changes in the presence/absence of a third variable. We need stratification to test this possibility, and we can either explore variable by variable (not really suitable with medium-large datasets) or test all of them at once through regression.
 
@@ -54,18 +54,18 @@ For this exercise, we will use `csinter()` from `EpiStats` to manually explore h
 
 ## Spanish tortilla as exposure of interest
 
-Spanish tortilla came out second in RR during univariate analysis, so we can explore whether its effect is modified by consuming russian salad, the main variable in terms of risk. So the question is: *does eating russian salad modifies the association between eating tortilla and becoming a case*?
+Spanish tortilla came out second in RR during univariate analysis, so we can explore whether its effect is modified by consuming Russian salad, the main variable in terms of risk. So the question is: *does eating Russian salad modifies the association between eating tortilla and becoming a case*?
 
 ```{r}
-## Stratified analysis between tortilla and becoming a case, by russian salad consumption
+## Stratified analysis between tortilla and becoming a case, by Russian salad consumption
 csinter(x = clean, 
         cases = "case", 
         exposure = "spanish_tortilla", 
         by = "russian_salad")
 ```
 
-**Action** — Is the relationship between spanish tortilla and becoming a case confounded by the consumption of russian salad?
+**Action** — Is the relationship between Spanish tortilla and becoming a case confounded by the consumption of Russian salad?
 
-**Action** — Check whether an association exists between eating russian salad and spanish tortilla
+**Action** — Check whether an association exists between eating Russian salad and Spanish tortilla
 
-**Action** — Conversely, is the association between russian salad and becoming a case confounded by the consumption of spanish tortilla? Discuss the result
+**Action** — Conversely, is the association between Russian salad and becoming a case confounded by the consumption of Spanish tortilla? Discuss the result

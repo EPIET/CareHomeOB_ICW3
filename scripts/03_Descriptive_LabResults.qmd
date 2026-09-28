@@ -70,26 +70,29 @@ What you need to understand is that, by **copying this code**, you can adapt it 
 ## Quick way to see the percentage of cases among the total participants
 janitor::tabyl(clean, case)
 
-## Complete Table Summary of Age, Sex and Group counts
+## Complete Table Summary of Age, Sex and Group counts by Case status
 table1 <- clean %>% 
   # only columns of interest
   select(case, age, sex, group) %>% 
-  tbl_summary(by = case,
-              # modify row headers
+  mutate(case = recode_values( # We recode case so that the table is easier to understand
+  case,
+  0 ~ "Non-case",
+  1 ~ "Case"
+)) %>% 
+  tbl_summary(by = case,                 
+              # modify row headers to make them prettier/easier to understand
               label = list(
-                age ~ "Age",
+                age ~ "Age",            
                 sex ~ "Sex", 
                 group ~ "Group"
               )) %>% 
-  bold_labels() %>% 
+  bold_labels() %>%                      
   # add total column
   add_overall() %>% 
   # customize header labels and appearance
   modify_header(
-    label = "**Characteristic**",
-    stat_0 = "**Overall** \n **N** = {n} ({style_percent(p)}%)",
-    stat_1 = "**Non-case** \n **N** = {n} ({style_percent(p)}%)",
-    stat_2 = "**Case** \n **N** = {n} ({style_percent(p)}%)", 
+    #Text in the upper left corner ( ** make the text bold )
+    label = "**Characteristic**"
   ) 
 
 # Export to Word using flextable
@@ -129,12 +132,15 @@ clean %>%
 
 **Action** — Produce a summary table displaying the symptoms among cases and non-cases. Probably you can recycle the vector you created to clean these columns for this task. *Which symptom was the more common among cases*?
 
-**Extra!** — Create a bar-plot of symptom's frequency among cases (*only if you have time later on*)
+⭐ **Extra!** — Create a bar-plot of symptom's frequency among cases (*only if you have time later on*)
 
 ::: {.callout-caution collapse="true" appearance="minimal" icon="false"}
 ## See the solution
 
 ``` r
+# Create a vector with the symptoms variables
+symptoms <- c("diarrhoea","vomiting","abdo","fever","nausea")
+
 # Table summary of symptom distribution by case definition
 clean %>% 
   select(all_of(symptoms), case) %>% 
@@ -188,23 +194,24 @@ You explored the incubation period distribution to decide about the Case Definit
 clean %>%  
   # Only cases
   filter(case == 1) %>% 
-  # Add factor onset_datetime to ggplot aesthetic:
+  # Add onset_datetime to ggplot aesthetic:
   ggplot(aes(x = onset_datetime)) + 
+  #Add histogram layer
   geom_histogram() +
   # select 6h breaks with custom date-time labels
   scale_x_datetime(
     date_breaks = "6 hours",
     date_labels =  "%d %b\n%H:%M") +
   # Update x and y axis labels
-  labs(x = "Date and time of onset symptoms", 
+  labs(x = "Date and time of symptoms onset", 
        y = "Number of cases") +
   theme_bw()
 ```
 :::
 
-## 2. Join of lab results
+## 2. Joining lab results
 
-The lab dataframe contains 66 entries with `sample_dates` and `salmonella_results`, the only positive result among all tested GI pathogens. The results are linked to the same patient id recorded in the cohort dataframe. You [learned about joins quite recentl](https://epiet.github.io/IntroToRCourse/scripts/S6E1.html)y, so take a look if you don't remember about it:
+The lab dataframe contains 66 entries with `sample_dates` and `salmonella_results`, the only positive result among all tested GI pathogens. The results are linked to the same patient id recorded in the cohort dataframe. You [learned about joins quite recently](https://epiet.github.io/IntroToRCourse/scripts/S6E1.html), so take a look if you don't remember about it:
 
 **Action** — Perform the join of the lab results. What happened to the row with no lab results at all?
 
