@@ -21,4 +21,10 @@ You, as the newly incorporated epidemiologist to the team, are tasked with explo
 - `carehome_familyday_lab.csv` - stool sample results for a subset of attendees
 - `carehome_familyday_codebook.csv` - information about each collected variable and codification
 
+::: callout-important
+## Data download
+
+You can download the raw data files and backup cleaned dataframes [using this link](https://github.com/EPIET/CareHomeOB_ICW3/raw/refs/heads/main/data/data.rar)
+:::
+
 Your first task is to get these into R, clean them up, and decide who counts as a case. The rest of the investigation depends on that decision.

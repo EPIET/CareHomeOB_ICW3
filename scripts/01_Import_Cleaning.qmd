@@ -17,6 +17,8 @@ When starting a new task in R, you need to set up your workspace, folder structu
 2.  Inside your project folder, create the recommended sub-folders for **scripts**, **data**, and **outputs** 📚\
     (*that includes the raw and clean data folders, remember!*)
 
+    - [Download](https://github.com/EPIET/CareHomeOB_ICW3/raw/refs/heads/main/data/data.rar) the course's data files and backups and store them accordingly
+
 3.  Open RStudio \> New Project \> Existing Directory \> Create to set up your **R Project** 💼
 
 Now you are truly set-up! Copy the exercise's dataframes to the `<raw>` data folder to keep everything tidy and isolated.
