@@ -62,9 +62,9 @@ Because we did not ask you to change any variable's name or create a new one, bo
 
 ## 1. Agree on a Case Definition
 
-The Case Definition is one key step in any outbreak investigation. We need to agree on the conditions that a person needs to meet in order to be considered a case, i.e., not everyone attending the Family Day is by default exposed to the food vehicle, nor all symptomatic persons are sick.
+The Case Definition is a key step in any outbreak investigation. We need to agree on the conditions that a person needs to meet in order to be considered a case, i.e., not everyone attending the Family Day is by default exposed to the food vehicle, nor all symptomatic persons are sick.
 
-Before continuing, stop and think on a plausible Case Definition for our outbreak. It's always useful to start from the classical triad: *person*, *place* and *time:*
+Before continuing, stop and think about a plausible Case Definition for our outbreak. It's always useful to start from the classical triad: *place, persone* and *time:*
 
 1.  **Place**: Does the mere fact of attending the Family Day qualify you as a potential case?
 
@@ -81,22 +81,22 @@ After discussing, you finally reach the following Case Definition:
 
 A Case is a person who:
 
-:   Attended the Family Day at "*Residencial Los Almendros*" care home on Sept 13th
+: Attended the Family Day at "*Residencia Los Almendros*" care home on Sept 13th
 
-    Ate from the lunch buffet
+  Ate from the lunch buffet
 
-    Became sick after eating (developed any symptoms)
+  Became sick after eating (developed any symptoms)
 
-    Became sick within a defined time period of relevance (12-72h)
+  Became sick within a defined time period of relevance (12-72h)
 
-Other possible Case Definition were possible, we just made a decision for this exercise. Sometimes you can develop multiple definitions to asses sensitivity and test its impact on the analyses, but that won't the be the case today
+Other Case Definitions were possible, we just made a decision for this exercise. Sometimes you can develop multiple definitions to asses sensitivity and test its impact on the analyses, but that won't the be the case today
 :::
 
 ## 2. Who can be a Case?
 
 ### Place criteria
 
-Outbreaks linked to events or places may make you thing the place criteria is not necessary. You ask for the attendance list and you have all potential exposed. But there is more to it when you examine the matter carefully.
+Outbreaks linked to events or places may make you think the place criteria is not necessary. You ask for the attendance list and you have all potential exposed. But there is more to it when you examine the matter carefully.
 
 **Action** — Do you have any variable that would make an attendee of the event disqualified to become a case? Think about the suspected transmission route of this outbreak
 

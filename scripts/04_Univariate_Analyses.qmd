@@ -13,7 +13,8 @@ pacman::p_load(
   skimr,         # to explore dataframes  [NEW ONE]
   EpiStats,      # for univariate epidemiological analyses
   epitools,      # for performing risk ratio estimation
-  tidyverse)
+  tidyverse,
+  update = T)
 
 clean <- import(here("data", "backup", "carehome_clean2.rds"), trust = T)
 ```
@@ -22,7 +23,7 @@ clean <- import(here("data", "backup", "carehome_clean2.rds"), trust = T)
 
 You will start this exercise with the same backup data `carehome_clean2.rds`, since we won't need the lab results to continue. If you saved your dataframe after joining, you can also use it, but we recommend you to load the fresh backup data to prevent any possible errors:
 
-- Start **a new scrip** for this exercise, as you will be performing your first analyses that require specific libraries to install and activate
+- Start **a new script** for this exercise, as you will be performing your first analyses that require specific libraries to install and activate
 
 - Load the following libraries and your backup data:
 
@@ -67,8 +68,12 @@ You will start the analysis by exploring associations between some non-food vari
 # Perform statistical comparisson table using tbl_summary()
 exp_agesexgroup_table <- clean %>% 
   select(case, age, sex, group) %>%   # variables of interest only
+  mutate(case = recode_values(
+  case,
+  0 ~ "Non-case",
+  1 ~ "Case")) %>% 
   tbl_summary(by = case) %>%          # stratifying variable
-  add_p() %>%                         # perform statistical comparisson
+  add_p() %>%                         # perform statistical comparison
   bold_labels()                       # add some visuals
 
 # see table
