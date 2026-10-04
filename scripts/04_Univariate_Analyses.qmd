@@ -13,8 +13,7 @@ pacman::p_load(
   skimr,         # to explore dataframes  [NEW ONE]
   EpiStats,      # for univariate epidemiological analyses
   epitools,      # for performing risk ratio estimation
-  tidyverse,
-  update = T)
+  tidyverse)
 
 clean <- import(here("data", "backup", "carehome_clean2.rds"), trust = T)
 ```

@@ -153,12 +153,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <a href="" title="" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" role="link" aria-label=""><i class="bi bi-github"></i></a>
       <ul class="dropdown-menu" aria-labelledby="quarto-navigation-tool-dropdown-0">
           <li>
-            <a class="dropdown-item quarto-navbar-tools-item" href="https://github.com/EPIET/IntroToRCourse/tree/main">
+            <a class="dropdown-item quarto-navbar-tools-item" href="https://github.com/EPIET/CareHomeOB_ICW3/tree/main">
             Source Code
             </a>
           </li>
           <li>
-            <a class="dropdown-item quarto-navbar-tools-item" href="https://github.com/EPIET/IntroToRCourse/issues">
+            <a class="dropdown-item quarto-navbar-tools-item" href="https://github.com/EPIET/CareHomeOB_ICW3/issues">
             Report an issue
             </a>
           </li>
@@ -178,8 +178,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
    
   <ul>
   <li><a href="#set-yourself-up" id="toc-set-yourself-up" class="nav-link active" data-scroll-target="#set-yourself-up">Set yourself up</a></li>
-  <li><a href="#consider-confounding-and-effect-modificiation" id="toc-consider-confounding-and-effect-modificiation" class="nav-link" data-scroll-target="#consider-confounding-and-effect-modificiation">1. Consider Confounding and Effect Modificiation</a></li>
+  <li><a href="#consider-confounding-and-effect-modification" id="toc-consider-confounding-and-effect-modification" class="nav-link" data-scroll-target="#consider-confounding-and-effect-modification">1. Consider Confounding and Effect Modification</a>
+  <ul class="collapse">
   <li><a href="#spanish-tortilla-as-exposure-of-interest" id="toc-spanish-tortilla-as-exposure-of-interest" class="nav-link" data-scroll-target="#spanish-tortilla-as-exposure-of-interest">Spanish tortilla as exposure of interest</a></li>
+  <li><a href="#optional-explore-russian-salad-as-the-exposure-of-interest" id="toc-optional-explore-russian-salad-as-the-exposure-of-interest" class="nav-link" data-scroll-target="#optional-explore-russian-salad-as-the-exposure-of-interest">Optional: explore russian salad as the exposure of interest</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -208,7 +211,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="set-yourself-up" class="level2">
 <h2 class="anchored" data-anchor-id="set-yourself-up">Set yourself up</h2>
-<p>One more time, start with the backup data <code>carehome_clean2.rds</code>. Start a new script o continue working on the previous one, but ideally start a new one. The libraries are the same than the previous exercise:</p>
+<p>One more time, start with the backup data <code>carehome_clean2.rds</code>. Start a new script or continue working on the previous one, but ideally start a new one. The libraries are the same than the previous exercise:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Check wether pacman is installed and activate it or install and activate otherwise</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(<span class="st">"pacman"</span>)){<span class="fu">install.packages</span>(pacman)}</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -229,17 +232,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="do">## Import clean data using rio and here</span></span>
 <span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>clean <span class="ot">&lt;-</span> <span class="fu">import</span>(<span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"backup"</span>, <span class="st">"carehome_clean2.rds"</span>), <span class="at">trust =</span> T)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
-<section id="consider-confounding-and-effect-modificiation" class="level2">
-<h2 class="anchored" data-anchor-id="consider-confounding-and-effect-modificiation">1. Consider Confounding and Effect Modificiation</h2>
-<p>Once you have identified food items associated with elevated risk of becoming a case, the next step is to consider any potential confounding related with that risk.</p>
-<p>Confounding and effect modification occurs when the association between one variable and the outcome changes in the presence/absence of a third variable. We need stratification to test this possibility, and we can either explore variable by variable (not really suitable with medium-large datasets) or test all of them at once through regression.</p>
-<p>For this exercise, we will use <code>csinter()</code> from <code>EpiStats</code> to manually explore how the association varies across the levels of a third one. In univariate analysis, the associations that emerge as both significant and non-significant can be confounded and the direction or magnitude of the effect is subject to change. In the future, you will build regression models with all suspected variables to account for this extent.</p>
-</section>
-<section id="spanish-tortilla-as-exposure-of-interest" class="level2">
-<h2 class="anchored" data-anchor-id="spanish-tortilla-as-exposure-of-interest">Spanish tortilla as exposure of interest</h2>
-<p>Spanish tortilla came out second in RR during univariate analysis, so we can explore whether its effect is modified by consuming russian salad, the main variable in terms of risk. So the question is: <em>does eating russian salad modifies the association between eating tortilla and becoming a case</em>?</p>
+<section id="consider-confounding-and-effect-modification" class="level2">
+<h2 class="anchored" data-anchor-id="consider-confounding-and-effect-modification">1. Consider Confounding and Effect Modification</h2>
+<p>Once you have identified food items associated with an elevated risk of becoming a case, the next step is to whether those associations are distorted or modified by a third variable.</p>
+<p>Confounding and effect modification are <strong>two distinct phenomena</strong>, both involving a third variable, but leading to very different interpretation:</p>
+<ul>
+<li><p><strong>Confounding</strong> is a <strong>distortion</strong> of the observed association. The third variable is associated with both both the exposure and the outcome, and the crude estimate does not reflect the true effect (bias). When we stratify by the confounder, the stratum-specific estimates are similar to each other but differ from the crude estimate. We adjust for the confounding variable to control it.</p></li>
+<li><p><strong>Effect modification</strong> (aka <strong>interaction</strong>) is a real phenomenon: the effect of the exposure on the outcome genuinely differs across levels of the third variable. When we stratify, the stratum-specific estimates differ meaningfully from each other. Effect modification is not corrected because it is not a bias, it is described and reported openly.</p></li>
+</ul>
+<p>We investigate both through stratification. For medium-to-large datasets, exploring variable by variable becomes impractical and we turn to regression methods. Here we will use <code>csinter()</code> from <code>EpiStats</code> to manually explore how the association varies across the levels of a third one.</p>
+<section id="spanish-tortilla-as-exposure-of-interest" class="level3">
+<h3 class="anchored" data-anchor-id="spanish-tortilla-as-exposure-of-interest">Spanish tortilla as exposure of interest</h3>
+<p>Spanish tortilla came out second in RR during univariable analysis, suggesting a potential association between eating tortilla and becoming a case. A plausible explanation is that people who ate russian salad also ate Spanish tortilla, so the effect of tortilla is a simple reflection of the effect of russian salad (i.e., <em>confounding</em>). Alternatively, the tortilla effect could genuinely differ depending on whether russian salad was eaten (i.e., <em>effect modification</em>).</p>
+<p>Stratification lets us distinguish between the two. The question is: <em>does the association between Spanish tortilla and becoming a case hold once we account for the russian salad consumption?</em></p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Stratified analysis between tortilla and becoming a case, by russian salad consumption</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Stratified analysis between tortilla and becoming a case, by Russian salad consumption</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">csinter</span>(<span class="at">x =</span> clean, </span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">cases =</span> <span class="st">"case"</span>, </span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">exposure =</span> <span class="st">"spanish_tortilla"</span>, </span>
@@ -280,13 +287,149 @@ $df2
 4       NA       NA</code></pre>
 </div>
 </div>
-<p><strong>Action</strong> — Is the relationship between spanish tortilla and becoming a case confounded by the consumption of russian salad?</p>
-<p><strong>Action</strong> — Check whether an association exists between eating russian salad and spanish tortilla</p>
-<p><strong>Action</strong> — Conversely, is the association between russian salad and becoming a case confounded by the consumption of spanish tortilla? Discuss the result</p>
+<p>When reading the output, compare:</p>
+<ul>
+<li><p>The <strong>stratum-specific RRs</strong> to each other: if they differ meaningfully, suspect effect modification</p></li>
+<li><p>The <strong>crude RR to the Mantel-Haenszel adjusted RR</strong>: if they differ substantially (rule of thumb for difference: &gt; 10-20%) and the strata are homogeneous, suspect confounding.</p></li>
+</ul>
+<p><strong>Action</strong> — Is the relationship between Spanish tortilla and becoming a case confounded by the consumption of Russian salad?</p>
+<div class="callout callout-style-simple callout-caution no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Caution</span>See the solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><strong>Step 1 — Any effect modification?</strong> Compare the two stratum-specific RRs:</p>
+<ul>
+<li>Russian salad = 1 → RR = 1.58 (95% CI 0.91–2.75)</li>
+<li>Russian salad = 0 → RR = 1.04 (95% CI 0.28–3.83)</li>
+</ul>
+<p><strong>Step 2 — Any confounding?</strong> Compare the crude and the adjusted RR:</p>
+<ul>
+<li>Crude RR = 2.14 (95% CI 1.28–3.57)</li>
+<li>MH-adjusted RR = 1.46 (95% CI 0.88–2.43)</li>
+<li>Relative change = –31.83 %</li>
+</ul>
+<p>A relative change above ~10–20 % is a common rule of thumb for meaningful confounding, and here it is roughly 32 %. The adjusted CI also crosses 1. So the apparent association between Spanish tortilla and becoming a case is <strong>largely explained by Russian salad consumption</strong>: once we account for who ate salad, tortilla no longer shows a clear independent effect.</p>
+</div>
+</div>
+</div>
+<p><strong>Action</strong> — Check whether an association exists between eating Russian salad and Spanish tortilla. What implication does it have for assessing confounding or effect modification? Tip: you learned about the appropriate test a moment ago.</p>
+<div class="callout callout-style-simple callout-caution no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Caution</span>See the solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Chi-square test of association between two binary variables</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">chisq.test</span>(clean<span class="sc">$</span>spanish_tortilla, clean<span class="sc">$</span>russian_salad)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Pearson's Chi-squared test with Yates' continuity correction
+
+data:  clean$spanish_tortilla and clean$russian_salad
+X-squared = 16.173, df = 1, p-value = 5.78e-05</code></pre>
+</div>
+</div>
+<p>The Chi-squared test clearly identifies a correlation between the two food items, with a p-value of 5.78e-05 (0.0000578)</p>
+<p><strong>Why does this matter, and what should we see?</strong> For a variable to act as a <strong>confounder</strong>, it must satisfy three conditions:</p>
+<ol type="1">
+<li>Be associated with the <strong>exposure</strong> (here, Spanish tortilla).</li>
+<li>Be associated with the <strong>outcome</strong> (here, becoming a case), independently of the exposure.</li>
+<li>Not be on the causal pathway between exposure and outcome.</li>
+</ol>
+<p>This check addresses the condition 1. We know condition 2 from the univariable analysis, and condition 3 is plausible. If people who ate Russian salad were also much more likely to eat Spanish tortilla, then part of the crude “tortilla effect” we saw earlier was really the Russian salad effect leaking through — which is exactly the pattern of confounding we observed when the adjusted RR dropped from 2.14 to 1.46.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="optional-explore-russian-salad-as-the-exposure-of-interest" class="level3">
+<h3 class="anchored" data-anchor-id="optional-explore-russian-salad-as-the-exposure-of-interest">Optional: explore russian salad as the exposure of interest</h3>
+<p><strong>Action</strong> — Conversely, is the association between Russian salad and becoming a case confounded by the consumption of Spanish tortilla? Discuss the result.</p>
+<div class="callout callout-style-simple callout-caution no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Caution</span>See the solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><strong>Step 1 — Any effect modification?</strong> Compare the two stratum-specific RRs for Russian salad:</p>
+<ul>
+<li>Spanish tortilla = 1 → RR = 4.91 (95% CI 1.65–14.59)</li>
+<li>Spanish tortilla = 0 → RR = 3.21 (95% CI 1.30–7.93)</li>
+</ul>
+<p>Woolf’s test gives p = 0.558, so there is no statistical evidence that the two RRs differ. Both are also well above 1 with CIs that exclude the null: the Russian salad effect is present and strong regardless of tortilla consumption.</p>
+<p><strong>Step 2 — Any confounding?</strong></p>
+<ul>
+<li>Crude RR = 4.39 (95% CI 2.28–8.44)</li>
+<li>MH-adjusted RR = 4.05 (95% CI 1.97–8.32)</li>
+<li>Relative change = –7.68 %</li>
+</ul>
+<p>The adjusted estimate is almost identical to the crude one (change well below the ~10 % rule of thumb), and the CI remains far from 1. <strong>Spanish tortilla does not confound the Russian salad – case association.</strong></p>
+<p><strong>Step 3 — Put the two stratified analyses side by side</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th></th>
+<th style="text-align: right;">Tortilla as exposure</th>
+<th style="text-align: right;">Russian salad as exposure</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Crude RR</td>
+<td style="text-align: right;">2.14 (1.28–3.57)</td>
+<td style="text-align: right;">4.39 (2.28–8.44)</td>
+</tr>
+<tr class="even">
+<td>MH-adjusted RR</td>
+<td style="text-align: right;">1.46 (0.88–2.43)</td>
+<td style="text-align: right;">4.05 (1.97–8.32)</td>
+</tr>
+<tr class="odd">
+<td>Relative change (adj vs crude)</td>
+<td style="text-align: right;">–31.8 %</td>
+<td style="text-align: right;">–7.7 %</td>
+</tr>
+<tr class="even">
+<td>Adjusted CI crosses 1?</td>
+<td style="text-align: right;">Yes</td>
+<td style="text-align: right;">No</td>
+</tr>
+</tbody>
+</table>
+<p>This <strong>asymmetry</strong> is the key diagnostic result of the stratified analysis:</p>
+<ul>
+<li>The crude tortilla effect <strong>collapses</strong> when we account for Russian salad consumption → the association was largely explained by the fact that tortilla-eaters also tended to eat Russian salad.</li>
+<li>The crude Russian salad effect <strong>persists almost unchanged</strong> when we account for tortilla consumption → Russian salad is associated with disease independently of tortilla.</li>
+</ul>
+<p>Taken together, the evidence points to <strong>Russian salad as the likely vehicle of the outbreak</strong>, with Spanish tortilla acting as a “passenger” exposure whose apparent effect was confounded by salad consumption.</p>
+</div>
+</div>
+</div>
 
 
 <!-- -->
 
+</section>
 </section>
 
 </main> <!-- /main -->
@@ -952,84 +1095,169 @@ window.onload = function() {
     }
   });
   </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Stratified Analysis"</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "Carehome Outbreak Exercise"</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co">#| include: false</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  here,          <span class="co"># to create file paths</span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  rio,           <span class="co"># to import data</span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  janitor,       <span class="co"># tools for data cleaning and exploration</span></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  gtsummary,     <span class="co"># for summary tables</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  skimr,         <span class="co"># to explore dataframes  [NEW ONE]</span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  EpiStats,      <span class="co"># for univariate epidemiological analyses</span></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  epitools,      <span class="co"># for performing risk ratio estimation</span></span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  tidyverse)</span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>clean <span class="ot">&lt;-</span> <span class="fu">import</span>(<span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"backup"</span>, <span class="st">"carehome_clean2.rds"</span>), <span class="at">trust =</span> T)</span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="fu">## Set yourself up</span></span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>One more time, start with the backup data <span class="in">`carehome_clean2.rds`</span>. Start a new script o continue working on the previous one, but ideally start a new one. The libraries are the same than the previous exercise:</span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="in">``` r</span></span>
-<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a><span class="do">## Check wether pacman is installed and activate it or install and activate otherwise</span></span>
-<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(<span class="st">"pacman"</span>)){<span class="fu">install.packages</span>(pacman)}</span>
-<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a><span class="do">## Activate libraries with pacman</span></span>
-<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(</span>
-<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>  here,          <span class="co"># to create file paths</span></span>
-<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>  rio,           <span class="co"># to import data</span></span>
-<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>  janitor,       <span class="co"># tools for data cleaning and exploration</span></span>
-<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>  gtsummary,     <span class="co"># for summary tables</span></span>
-<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>  skimr,         <span class="co"># to explore dataframes  [NEW ONE]</span></span>
-<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>  EpiStats,      <span class="co"># for univariate epidemiological analyses</span></span>
-<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>  epitools,      <span class="co"># for performing risk ratio estimation</span></span>
-<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>  tidyverse,     <span class="co"># for data manipulation (always the last library!!!)</span></span>
-<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a>  <span class="at">update =</span> T     <span class="co"># to make sure libraries are updated if new versions exist</span></span>
-<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a><span class="do">## Import clean data using rio and here</span></span>
-<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>clean <span class="ot">&lt;-</span> <span class="fu">import</span>(<span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"backup"</span>, <span class="st">"carehome_clean2.rds"</span>), <span class="at">trust =</span> T)</span>
-<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a><span class="fu">## 1. Consider Confounding and Effect Modificiation</span></span>
-<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a>Once you have identified food items associated with elevated risk of becoming a case, the next step is to consider any potential confounding related with that risk.</span>
-<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a>Confounding and effect modification occurs when the association between one variable and the outcome changes in the presence/absence of a third variable. We need stratification to test this possibility, and we can either explore variable by variable (not really suitable with medium-large datasets) or test all of them at once through regression.</span>
-<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a>For this exercise, we will use <span class="in">`csinter()`</span> from <span class="in">`EpiStats`</span> to manually explore how the association varies across the levels of a third one. In univariate analysis, the associations that emerge as both significant and non-significant can be confounded and the direction or magnitude of the effect is subject to change. In the future, you will build regression models with all suspected variables to account for this extent.</span>
-<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a><span class="fu">## Spanish tortilla as exposure of interest</span></span>
-<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a>Spanish tortilla came out second in RR during univariate analysis, so we can explore whether its effect is modified by consuming russian salad, the main variable in terms of risk. So the question is: *does eating russian salad modifies the association between eating tortilla and becoming a case*?</span>
-<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a><span class="do">## Stratified analysis between tortilla and becoming a case, by russian salad consumption</span></span>
-<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a><span class="fu">csinter</span>(<span class="at">x =</span> clean, </span>
-<span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a>        <span class="at">cases =</span> <span class="st">"case"</span>, </span>
-<span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a>        <span class="at">exposure =</span> <span class="st">"spanish_tortilla"</span>, </span>
-<span id="cb4-68"><a href="#cb4-68" aria-hidden="true" tabindex="-1"></a>        <span class="at">by =</span> <span class="st">"russian_salad"</span>)</span>
-<span id="cb4-69"><a href="#cb4-69" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb4-70"><a href="#cb4-70" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-71"><a href="#cb4-71" aria-hidden="true" tabindex="-1"></a>**Action** — Is the relationship between spanish tortilla and becoming a case confounded by the consumption of russian salad?</span>
-<span id="cb4-72"><a href="#cb4-72" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-73"><a href="#cb4-73" aria-hidden="true" tabindex="-1"></a>**Action** — Check whether an association exists between eating russian salad and spanish tortilla</span>
-<span id="cb4-74"><a href="#cb4-74" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-75"><a href="#cb4-75" aria-hidden="true" tabindex="-1"></a>**Action** — Conversely, is the association between russian salad and becoming a case confounded by the consumption of spanish tortilla? Discuss the result</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Stratified Analysis"</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "Carehome Outbreak Exercise"</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co">#| include: false</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  here,          <span class="co"># to create file paths</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  rio,           <span class="co"># to import data</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  janitor,       <span class="co"># tools for data cleaning and exploration</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>  gtsummary,     <span class="co"># for summary tables</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>  skimr,         <span class="co"># to explore dataframes  [NEW ONE]</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>  EpiStats,      <span class="co"># for univariate epidemiological analyses</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>  epitools,      <span class="co"># for performing risk ratio estimation</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>  tidyverse)</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>clean <span class="ot">&lt;-</span> <span class="fu">import</span>(<span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"backup"</span>, <span class="st">"carehome_clean2.rds"</span>), <span class="at">trust =</span> T)</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a><span class="fu">## Set yourself up</span></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>One more time, start with the backup data <span class="in">`carehome_clean2.rds`</span>. Start a new script or continue working on the previous one, but ideally start a new one. The libraries are the same than the previous exercise:</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a><span class="in">``` r</span></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a><span class="do">## Check wether pacman is installed and activate it or install and activate otherwise</span></span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(<span class="st">"pacman"</span>)){<span class="fu">install.packages</span>(pacman)}</span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a><span class="do">## Activate libraries with pacman</span></span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(</span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>  here,          <span class="co"># to create file paths</span></span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>  rio,           <span class="co"># to import data</span></span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>  janitor,       <span class="co"># tools for data cleaning and exploration</span></span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>  gtsummary,     <span class="co"># for summary tables</span></span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>  skimr,         <span class="co"># to explore dataframes  [NEW ONE]</span></span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>  EpiStats,      <span class="co"># for univariate epidemiological analyses</span></span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>  epitools,      <span class="co"># for performing risk ratio estimation</span></span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>  tidyverse,     <span class="co"># for data manipulation (always the last library!!!)</span></span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>  <span class="at">update =</span> T     <span class="co"># to make sure libraries are updated if new versions exist</span></span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a><span class="do">## Import clean data using rio and here</span></span>
+<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a>clean <span class="ot">&lt;-</span> <span class="fu">import</span>(<span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"backup"</span>, <span class="st">"carehome_clean2.rds"</span>), <span class="at">trust =</span> T)</span>
+<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a><span class="fu">## 1. Consider Confounding and Effect Modification</span></span>
+<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a>Once you have identified food items associated with an elevated risk of becoming a case, the next step is to whether those associations are distorted or modified by a third variable.</span>
+<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a>Confounding and effect modification are **two distinct phenomena**, both involving a third variable, but leading to very different interpretation:</span>
+<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Confounding** is a **distortion** of the observed association. The third variable is associated with both both the exposure and the outcome, and the crude estimate does not reflect the true effect (bias). When we stratify by the confounder, the stratum-specific estimates are similar to each other but differ from the crude estimate. We adjust for the confounding variable to control it.</span>
+<span id="cb6-56"><a href="#cb6-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Effect modification** (aka **interaction**) is a real phenomenon: the effect of the exposure on the outcome genuinely differs across levels of the third variable. When we stratify, the stratum-specific estimates differ meaningfully from each other. Effect modification is not corrected because it is not a bias, it is described and reported openly.</span>
+<span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-59"><a href="#cb6-59" aria-hidden="true" tabindex="-1"></a>We investigate both through stratification. For medium-to-large datasets, exploring variable by variable becomes impractical and we turn to regression methods. Here we will use <span class="in">`csinter()`</span> from <span class="in">`EpiStats`</span> to manually explore how the association varies across the levels of a third one.</span>
+<span id="cb6-60"><a href="#cb6-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-61"><a href="#cb6-61" aria-hidden="true" tabindex="-1"></a><span class="fu">### Spanish tortilla as exposure of interest</span></span>
+<span id="cb6-62"><a href="#cb6-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-63"><a href="#cb6-63" aria-hidden="true" tabindex="-1"></a>Spanish tortilla came out second in RR during univariable analysis, suggesting a potential association between eating tortilla and becoming a case. A plausible explanation is that people who ate russian salad also ate Spanish tortilla, so the effect of tortilla is a simple reflection of the effect of russian salad (i.e., *confounding*). Alternatively, the tortilla effect could genuinely differ depending on whether russian salad was eaten (i.e., *effect modification*).</span>
+<span id="cb6-64"><a href="#cb6-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-65"><a href="#cb6-65" aria-hidden="true" tabindex="-1"></a>Stratification lets us distinguish between the two. The question is: *does the association between Spanish tortilla and becoming a case hold once we account for the russian salad consumption?*</span>
+<span id="cb6-66"><a href="#cb6-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-69"><a href="#cb6-69" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb6-70"><a href="#cb6-70" aria-hidden="true" tabindex="-1"></a><span class="do">## Stratified analysis between tortilla and becoming a case, by Russian salad consumption</span></span>
+<span id="cb6-71"><a href="#cb6-71" aria-hidden="true" tabindex="-1"></a><span class="fu">csinter</span>(<span class="at">x =</span> clean, </span>
+<span id="cb6-72"><a href="#cb6-72" aria-hidden="true" tabindex="-1"></a>        <span class="at">cases =</span> <span class="st">"case"</span>, </span>
+<span id="cb6-73"><a href="#cb6-73" aria-hidden="true" tabindex="-1"></a>        <span class="at">exposure =</span> <span class="st">"spanish_tortilla"</span>, </span>
+<span id="cb6-74"><a href="#cb6-74" aria-hidden="true" tabindex="-1"></a>        <span class="at">by =</span> <span class="st">"russian_salad"</span>)</span>
+<span id="cb6-75"><a href="#cb6-75" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-76"><a href="#cb6-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-77"><a href="#cb6-77" aria-hidden="true" tabindex="-1"></a>When reading the output, compare:</span>
+<span id="cb6-78"><a href="#cb6-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-79"><a href="#cb6-79" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The **stratum-specific RRs** to each other: if they differ meaningfully, suspect effect modification</span>
+<span id="cb6-80"><a href="#cb6-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-81"><a href="#cb6-81" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The **crude RR to the Mantel-Haenszel adjusted RR**: if they differ substantially (rule of thumb for difference: <span class="sc">\&gt;</span> 10-20%) and the strata are homogeneous, suspect confounding.</span>
+<span id="cb6-82"><a href="#cb6-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-83"><a href="#cb6-83" aria-hidden="true" tabindex="-1"></a>**Action** — Is the relationship between Spanish tortilla and becoming a case confounded by the consumption of Russian salad?</span>
+<span id="cb6-84"><a href="#cb6-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-85"><a href="#cb6-85" aria-hidden="true" tabindex="-1"></a>::: {.callout-caution collapse="true" appearance="minimal" icon="false"}</span>
+<span id="cb6-86"><a href="#cb6-86" aria-hidden="true" tabindex="-1"></a><span class="fu">## See the solution</span></span>
+<span id="cb6-87"><a href="#cb6-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-88"><a href="#cb6-88" aria-hidden="true" tabindex="-1"></a>**Step 1 — Any effect modification?** Compare the two stratum-specific RRs:</span>
+<span id="cb6-89"><a href="#cb6-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-90"><a href="#cb6-90" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Russian salad = 1 → RR = 1.58 (95% CI 0.91–2.75)</span>
+<span id="cb6-91"><a href="#cb6-91" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Russian salad = 0 → RR = 1.04 (95% CI 0.28–3.83)</span>
+<span id="cb6-92"><a href="#cb6-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-93"><a href="#cb6-93" aria-hidden="true" tabindex="-1"></a>**Step 2 — Any confounding?** Compare the crude and the adjusted RR:</span>
+<span id="cb6-94"><a href="#cb6-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-95"><a href="#cb6-95" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Crude RR = 2.14 (95% CI 1.28–3.57)</span>
+<span id="cb6-96"><a href="#cb6-96" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>MH-adjusted RR = 1.46 (95% CI 0.88–2.43)</span>
+<span id="cb6-97"><a href="#cb6-97" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Relative change = –31.83 %</span>
+<span id="cb6-98"><a href="#cb6-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-99"><a href="#cb6-99" aria-hidden="true" tabindex="-1"></a>A relative change above \~10–20 % is a common rule of thumb for meaningful confounding, and here it is roughly 32 %. The adjusted CI also crosses 1. So the apparent association between Spanish tortilla and becoming a case is **largely explained by Russian salad consumption**: once we account for who ate salad, tortilla no longer shows a clear independent effect.</span>
+<span id="cb6-100"><a href="#cb6-100" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb6-101"><a href="#cb6-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-102"><a href="#cb6-102" aria-hidden="true" tabindex="-1"></a>**Action** — Check whether an association exists between eating Russian salad and Spanish tortilla. What implication does it have for assessing confounding or effect modification? Tip: you learned about the appropriate test a moment ago.</span>
+<span id="cb6-103"><a href="#cb6-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-104"><a href="#cb6-104" aria-hidden="true" tabindex="-1"></a>::: {.callout-caution collapse="true" appearance="minimal" icon="false"}</span>
+<span id="cb6-105"><a href="#cb6-105" aria-hidden="true" tabindex="-1"></a><span class="fu">## See the solution</span></span>
+<span id="cb6-106"><a href="#cb6-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-109"><a href="#cb6-109" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb6-110"><a href="#cb6-110" aria-hidden="true" tabindex="-1"></a><span class="co"># Chi-square test of association between two binary variables</span></span>
+<span id="cb6-111"><a href="#cb6-111" aria-hidden="true" tabindex="-1"></a><span class="fu">chisq.test</span>(clean<span class="sc">$</span>spanish_tortilla, clean<span class="sc">$</span>russian_salad)</span>
+<span id="cb6-112"><a href="#cb6-112" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-113"><a href="#cb6-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-114"><a href="#cb6-114" aria-hidden="true" tabindex="-1"></a>The Chi-squared test clearly identifies a correlation between the two food items, with a p-value of 5.78e-05 (0.0000578)</span>
+<span id="cb6-115"><a href="#cb6-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-116"><a href="#cb6-116" aria-hidden="true" tabindex="-1"></a>**Why does this matter, and what should we see?** For a variable to act as a **confounder**, it must satisfy three conditions:</span>
+<span id="cb6-117"><a href="#cb6-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-118"><a href="#cb6-118" aria-hidden="true" tabindex="-1"></a><span class="ss">1.  </span>Be associated with the **exposure** (here, Spanish tortilla).</span>
+<span id="cb6-119"><a href="#cb6-119" aria-hidden="true" tabindex="-1"></a><span class="ss">2.  </span>Be associated with the **outcome** (here, becoming a case), independently of the exposure.</span>
+<span id="cb6-120"><a href="#cb6-120" aria-hidden="true" tabindex="-1"></a><span class="ss">3.  </span>Not be on the causal pathway between exposure and outcome.</span>
+<span id="cb6-121"><a href="#cb6-121" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-122"><a href="#cb6-122" aria-hidden="true" tabindex="-1"></a>This check addresses the condition 1. We know condition 2 from the univariable analysis, and condition 3 is plausible. If people who ate Russian salad were also much more likely to eat Spanish tortilla, then part of the crude "tortilla effect" we saw earlier was really the Russian salad effect leaking through — which is exactly the pattern of confounding we observed when the adjusted RR dropped from 2.14 to 1.46.</span>
+<span id="cb6-123"><a href="#cb6-123" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb6-124"><a href="#cb6-124" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-125"><a href="#cb6-125" aria-hidden="true" tabindex="-1"></a><span class="fu">### Optional: explore russian salad as the exposure of interest</span></span>
+<span id="cb6-126"><a href="#cb6-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-127"><a href="#cb6-127" aria-hidden="true" tabindex="-1"></a>**Action** — Conversely, is the association between Russian salad and becoming a case confounded by the consumption of Spanish tortilla? Discuss the result.</span>
+<span id="cb6-128"><a href="#cb6-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-129"><a href="#cb6-129" aria-hidden="true" tabindex="-1"></a>::: {.callout-caution collapse="true" appearance="minimal" icon="false"}</span>
+<span id="cb6-130"><a href="#cb6-130" aria-hidden="true" tabindex="-1"></a><span class="fu">## See the solution</span></span>
+<span id="cb6-131"><a href="#cb6-131" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-132"><a href="#cb6-132" aria-hidden="true" tabindex="-1"></a>**Step 1 — Any effect modification?** Compare the two stratum-specific RRs for Russian salad:</span>
+<span id="cb6-133"><a href="#cb6-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-134"><a href="#cb6-134" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Spanish tortilla = 1 → RR = 4.91 (95% CI 1.65–14.59)</span>
+<span id="cb6-135"><a href="#cb6-135" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Spanish tortilla = 0 → RR = 3.21 (95% CI 1.30–7.93)</span>
+<span id="cb6-136"><a href="#cb6-136" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-137"><a href="#cb6-137" aria-hidden="true" tabindex="-1"></a>Woolf's test gives p = 0.558, so there is no statistical evidence that the two RRs differ. Both are also well above 1 with CIs that exclude the null: the Russian salad effect is present and strong regardless of tortilla consumption.</span>
+<span id="cb6-138"><a href="#cb6-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-139"><a href="#cb6-139" aria-hidden="true" tabindex="-1"></a>**Step 2 — Any confounding?**</span>
+<span id="cb6-140"><a href="#cb6-140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-141"><a href="#cb6-141" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Crude RR = 4.39 (95% CI 2.28–8.44)</span>
+<span id="cb6-142"><a href="#cb6-142" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>MH-adjusted RR = 4.05 (95% CI 1.97–8.32)</span>
+<span id="cb6-143"><a href="#cb6-143" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Relative change = –7.68 %</span>
+<span id="cb6-144"><a href="#cb6-144" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-145"><a href="#cb6-145" aria-hidden="true" tabindex="-1"></a>The adjusted estimate is almost identical to the crude one (change well below the \~10 % rule of thumb), and the CI remains far from 1. **Spanish tortilla does not confound the Russian salad – case association.**</span>
+<span id="cb6-146"><a href="#cb6-146" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-147"><a href="#cb6-147" aria-hidden="true" tabindex="-1"></a>**Step 3 — Put the two stratified analyses side by side**</span>
+<span id="cb6-148"><a href="#cb6-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-149"><a href="#cb6-149" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span>   <span class="pp">|</span> Tortilla as exposure <span class="pp">|</span> Russian salad as exposure <span class="pp">|</span></span>
+<span id="cb6-150"><a href="#cb6-150" aria-hidden="true" tabindex="-1"></a><span class="pp">|----|---:|---:|</span></span>
+<span id="cb6-151"><a href="#cb6-151" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Crude RR <span class="pp">|</span> 2.14 (1.28–3.57) <span class="pp">|</span> 4.39 (2.28–8.44) <span class="pp">|</span></span>
+<span id="cb6-152"><a href="#cb6-152" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> MH-adjusted RR <span class="pp">|</span> 1.46 (0.88–2.43) <span class="pp">|</span> 4.05 (1.97–8.32) <span class="pp">|</span></span>
+<span id="cb6-153"><a href="#cb6-153" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Relative change (adj vs crude) <span class="pp">|</span> –31.8 % <span class="pp">|</span> –7.7 % <span class="pp">|</span></span>
+<span id="cb6-154"><a href="#cb6-154" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Adjusted CI crosses 1? <span class="pp">|</span> Yes <span class="pp">|</span> No <span class="pp">|</span></span>
+<span id="cb6-155"><a href="#cb6-155" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-156"><a href="#cb6-156" aria-hidden="true" tabindex="-1"></a>This **asymmetry** is the key diagnostic result of the stratified analysis:</span>
+<span id="cb6-157"><a href="#cb6-157" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-158"><a href="#cb6-158" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The crude tortilla effect **collapses** when we account for Russian salad consumption → the association was largely explained by the fact that tortilla-eaters also tended to eat Russian salad.</span>
+<span id="cb6-159"><a href="#cb6-159" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The crude Russian salad effect **persists almost unchanged** when we account for tortilla consumption → Russian salad is associated with disease independently of tortilla.</span>
+<span id="cb6-160"><a href="#cb6-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-161"><a href="#cb6-161" aria-hidden="true" tabindex="-1"></a>Taken together, the evidence points to **Russian salad as the likely vehicle of the outbreak**, with Spanish tortilla acting as a "passenger" exposure whose apparent effect was confounded by salad consumption.</span>
+<span id="cb6-162"><a href="#cb6-162" aria-hidden="true" tabindex="-1"></a>:::</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<p>© 2026 – Intro to R Course</p>
+<p>© 2026 – Outbreak exercise</p>
 </div>   
     <div class="nav-footer-center">
       &nbsp;
@@ -1037,7 +1265,7 @@ window.onload = function() {
     <div class="nav-footer-right">
       <ul class="footer-items list-unstyled">
     <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/EPIET/IntroToRCourse">
+    <a class="nav-link" href="https://github.com/EPIET/CareHomeOB_ICW3">
       <i class="bi bi-github" role="img">
 </i> 
     </a>

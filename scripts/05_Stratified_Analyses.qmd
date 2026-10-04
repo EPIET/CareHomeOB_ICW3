@@ -46,15 +46,21 @@ clean <- import(here("data", "backup", "carehome_clean2.rds"), trust = T)
 
 ## 1. Consider Confounding and Effect Modification
 
-Once you have identified food items associated with an elevated risk of becoming a case, the next step is to consider any potential confounding related with that risk.
+Once you have identified food items associated with an elevated risk of becoming a case, the next step is to whether those associations are distorted or modified by a third variable.
 
-Confounding and effect modification occurs when the association between one variable and the outcome changes in the presence/absence of a third variable. We need stratification to test this possibility, and we can either explore variable by variable (not really suitable with medium-large datasets) or test all of them at once through regression.
+Confounding and effect modification are **two distinct phenomena**, both involving a third variable, but leading to very different interpretation:
 
-For this exercise, we will use `csinter()` from `EpiStats` to manually explore how the association varies across the levels of a third one. In univariate analysis, the associations that emerge as both significant and non-significant can be confounded and the direction or magnitude of the effect is subject to change. In the future, you will build regression models with all suspected variables to account for this extent.
+- **Confounding** is a **distortion** of the observed association. The third variable is associated with both both the exposure and the outcome, and the crude estimate does not reflect the true effect (bias). When we stratify by the confounder, the stratum-specific estimates are similar to each other but differ from the crude estimate. We adjust for the confounding variable to control it.
 
-## Spanish tortilla as exposure of interest
+- **Effect modification** (aka **interaction**) is a real phenomenon: the effect of the exposure on the outcome genuinely differs across levels of the third variable. When we stratify, the stratum-specific estimates differ meaningfully from each other. Effect modification is not corrected because it is not a bias, it is described and reported openly.
 
-Spanish tortilla came out second in RR during univariate analysis, so we can explore whether its effect is modified by consuming Russian salad, the main variable in terms of risk. So the question is: *does eating Russian salad modifies the association between eating tortilla and becoming a case*?
+We investigate both through stratification. For medium-to-large datasets, exploring variable by variable becomes impractical and we turn to regression methods. Here we will use `csinter()` from `EpiStats` to manually explore how the association varies across the levels of a third one.
+
+### Spanish tortilla as exposure of interest
+
+Spanish tortilla came out second in RR during univariable analysis, suggesting a potential association between eating tortilla and becoming a case. A plausible explanation is that people who ate russian salad also ate Spanish tortilla, so the effect of tortilla is a simple reflection of the effect of russian salad (i.e., *confounding*). Alternatively, the tortilla effect could genuinely differ depending on whether russian salad was eaten (i.e., *effect modification*).
+
+Stratification lets us distinguish between the two. The question is: *does the association between Spanish tortilla and becoming a case hold once we account for the russian salad consumption?*
 
 ```{r}
 ## Stratified analysis between tortilla and becoming a case, by Russian salad consumption
@@ -64,8 +70,87 @@ csinter(x = clean,
         by = "russian_salad")
 ```
 
+When reading the output, compare:
+
+- The **stratum-specific RRs** to each other: if they differ meaningfully, suspect effect modification
+
+- The **crude RR to the Mantel-Haenszel adjusted RR**: if they differ substantially (rule of thumb for difference: \> 10-20%) and the strata are homogeneous, suspect confounding.
+
 **Action** — Is the relationship between Spanish tortilla and becoming a case confounded by the consumption of Russian salad?
 
-**Action** — Check whether an association exists between eating Russian salad and Spanish tortilla
+::: {.callout-caution collapse="true" appearance="minimal" icon="false"}
+## See the solution
 
-**Action** — Conversely, is the association between Russian salad and becoming a case confounded by the consumption of Spanish tortilla? Discuss the result
+**Step 1 — Any effect modification?** Compare the two stratum-specific RRs:
+
+- Russian salad = 1 → RR = 1.58 (95% CI 0.91–2.75)
+- Russian salad = 0 → RR = 1.04 (95% CI 0.28–3.83)
+
+**Step 2 — Any confounding?** Compare the crude and the adjusted RR:
+
+- Crude RR = 2.14 (95% CI 1.28–3.57)
+- MH-adjusted RR = 1.46 (95% CI 0.88–2.43)
+- Relative change = –31.83 %
+
+A relative change above \~10–20 % is a common rule of thumb for meaningful confounding, and here it is roughly 32 %. The adjusted CI also crosses 1. So the apparent association between Spanish tortilla and becoming a case is **largely explained by Russian salad consumption**: once we account for who ate salad, tortilla no longer shows a clear independent effect.
+:::
+
+**Action** — Check whether an association exists between eating Russian salad and Spanish tortilla. What implication does it have for assessing confounding or effect modification? Tip: you learned about the appropriate test a moment ago.
+
+::: {.callout-caution collapse="true" appearance="minimal" icon="false"}
+## See the solution
+
+```{r}
+# Chi-square test of association between two binary variables
+chisq.test(clean$spanish_tortilla, clean$russian_salad)
+```
+
+The Chi-squared test clearly identifies a correlation between the two food items, with a p-value of 5.78e-05 (0.0000578)
+
+**Why does this matter, and what should we see?** For a variable to act as a **confounder**, it must satisfy three conditions:
+
+1.  Be associated with the **exposure** (here, Spanish tortilla).
+2.  Be associated with the **outcome** (here, becoming a case), independently of the exposure.
+3.  Not be on the causal pathway between exposure and outcome.
+
+This check addresses the condition 1. We know condition 2 from the univariable analysis, and condition 3 is plausible. If people who ate Russian salad were also much more likely to eat Spanish tortilla, then part of the crude "tortilla effect" we saw earlier was really the Russian salad effect leaking through — which is exactly the pattern of confounding we observed when the adjusted RR dropped from 2.14 to 1.46.
+:::
+
+### Optional: explore russian salad as the exposure of interest
+
+**Action** — Conversely, is the association between Russian salad and becoming a case confounded by the consumption of Spanish tortilla? Discuss the result.
+
+::: {.callout-caution collapse="true" appearance="minimal" icon="false"}
+## See the solution
+
+**Step 1 — Any effect modification?** Compare the two stratum-specific RRs for Russian salad:
+
+- Spanish tortilla = 1 → RR = 4.91 (95% CI 1.65–14.59)
+- Spanish tortilla = 0 → RR = 3.21 (95% CI 1.30–7.93)
+
+Woolf's test gives p = 0.558, so there is no statistical evidence that the two RRs differ. Both are also well above 1 with CIs that exclude the null: the Russian salad effect is present and strong regardless of tortilla consumption.
+
+**Step 2 — Any confounding?**
+
+- Crude RR = 4.39 (95% CI 2.28–8.44)
+- MH-adjusted RR = 4.05 (95% CI 1.97–8.32)
+- Relative change = –7.68 %
+
+The adjusted estimate is almost identical to the crude one (change well below the \~10 % rule of thumb), and the CI remains far from 1. **Spanish tortilla does not confound the Russian salad – case association.**
+
+**Step 3 — Put the two stratified analyses side by side**
+
+|   | Tortilla as exposure | Russian salad as exposure |
+|----|---:|---:|
+| Crude RR | 2.14 (1.28–3.57) | 4.39 (2.28–8.44) |
+| MH-adjusted RR | 1.46 (0.88–2.43) | 4.05 (1.97–8.32) |
+| Relative change (adj vs crude) | –31.8 % | –7.7 % |
+| Adjusted CI crosses 1? | Yes | No |
+
+This **asymmetry** is the key diagnostic result of the stratified analysis:
+
+- The crude tortilla effect **collapses** when we account for Russian salad consumption → the association was largely explained by the fact that tortilla-eaters also tended to eat Russian salad.
+- The crude Russian salad effect **persists almost unchanged** when we account for tortilla consumption → Russian salad is associated with disease independently of tortilla.
+
+Taken together, the evidence points to **Russian salad as the likely vehicle of the outbreak**, with Spanish tortilla acting as a "passenger" exposure whose apparent effect was confounded by salad consumption.
+:::
